@@ -2,12 +2,9 @@ import React, {Component, Fragment, useState, useEffect} from 'react';
 import ReactEventSource from 'react-eventsource'
 import axios from 'axios'
 
-class EventSourceView extends React.Component {
+const EventSourceView = (props) => {
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
+    const [message, setMessage] = useState('init-message');
 
     useEffect(() => {
         new EventSource('http://localhost:8280/flux-rest')
