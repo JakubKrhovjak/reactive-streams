@@ -9,39 +9,17 @@ class EventSourceView extends React.Component {
 
         this.state = {
 
-            message: "init-message"
-        }
-        //
+    useEffect(() => {
+        new EventSource('http://localhost:8280/flux-rest')
+            .addEventListener('message',  (message) => setMessage(message.data));
+    }, []);
 
-        let eventSource = new EventSource('http://localhost:8280/flux-rest');
 
-        eventSource.addEventListener('message', function(message) {
-            this.setState({message: message.data});
-        }.bind(this), false);
-    }
-
-    componentDidMount() {
-        axios.get('http://localhost:8280/flux-rest')
-             .then(function (response) {
-                console.log(response.data);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-    }
-
-    render() {
-        debugger;
-        // const state = this.state;
-        return (
-            <Fragment>
-
-                <h1>{this.state.message}</h1>
-
-            </Fragment>
-        )
-
-    }
-}
+    return (
+        <Fragment>
+            <h1>{message}</h1>
+        </Fragment>
+    )
+};
 
 export default EventSourceView;

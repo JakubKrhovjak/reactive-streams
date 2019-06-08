@@ -1,5 +1,6 @@
 package com.example.reactiveproducer;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 /**
  * Created by Jakub krhovják on 6/8/19.
  */
+@CrossOrigin
 @RestController
 public class RestProducer {
 
