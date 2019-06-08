@@ -1,0 +1,17 @@
+<html>
+<body>
+<h1>It's works!</h1>
+<div id="rest-refresh"></div>
+<div id="rsocket-refresh"></div>
+<script>
+    window.addEventListener('load', function (event) {
+        var refresh = document.getElementById('rest-refresh');
+        var eventSource = new EventSource('http://localhost:8280/flux-rest')
+        eventSource.addEventListener('message', function (event) {
+            refresh.innerHTML = '<h1>' + event.data + '<h1>';
+        })
+    })
+</script>
+
+</body>
+</html>
