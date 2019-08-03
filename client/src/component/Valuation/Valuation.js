@@ -4,7 +4,7 @@ import CardContent from "@material-ui/core/CardContent";
 import makeStyles from "@material-ui/styles/makeStyles/makeStyles";
 
 const useStyles = makeStyles(theme => ({
-    card: {
+    valuation: {
         marginTop: theme.spacing(1),
         '&:last-child': {
             marginBottom: theme.spacing(1)
@@ -18,7 +18,7 @@ export const Valuation = ({valuation}) => {
     const classes = useStyles();
 
     return(
-        <Card className={classes.card}>
+        <Card className={classes.valuation}>
         <CardContent>
             <Typography >
                 {valuation.name}
