@@ -1,40 +1,33 @@
-import React, {useEffect} from 'react';
-import {fetchValuations} from "./duck/valuationAction";
-import {connect} from "react-redux";
+import React from 'react';
+import {Card, Typography} from "@material-ui/core";
+import CardContent from "@material-ui/core/CardContent";
+import makeStyles from "@material-ui/styles/makeStyles/makeStyles";
 
+const useStyles = makeStyles(theme => ({
+    card: {
+        margin: theme.spacing(1),
+        // color: theme.palette.text.secondary,
+    },
+}));
 
-const Valuations = ({fetchValuations, valuations}) => {
+export const Valuation = ({valuation}) => {
 
-    useEffect(() => {
-        console.log("fetch")
-        fetchValuations();
+    const classes = useStyles();
 
-    }, []);
-
-
-    const a = () => {
-        console.log("valuations:", valuations)
-        return (
-            <div>
-                {valuations.map(v => {
-                    console.log("v:", v)
-                return <div key={v.id}>{v.id}</div>
-            })}
-            </div>
-        )
-    }
-
-    return a();
-
-
+    return(
+        <Card className={classes.card}>
+        <CardContent>
+            <Typography >
+                {valuation.name}
+            </Typography>
+            <Typography>
+                {valuation.description}
+            </Typography>
+            <Typography>
+                {valuation.value}
+            </Typography>
+        </CardContent>
+        </Card>
+    )
 };
 
-const mapStateToProps = ({valuations}) => {
-    console.log(valuations)
-    return {
-        valuations
-    }
-};
-
-
-export default connect(mapStateToProps, {fetchValuations})(Valuations);
