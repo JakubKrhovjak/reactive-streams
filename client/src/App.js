@@ -1,13 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+
 import EventSourceView from "./component/EventSource/EventSourceView";
+import Valuations from "./component/valuation/Valuation";
 
 function App() {
   return (
     <div className="App">
 
-      <EventSourceView/>
+      {/*<EventSourceView/>*/}
+      <Valuations/>
 
     </div>
   );
