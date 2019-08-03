@@ -5,7 +5,10 @@ import makeStyles from "@material-ui/styles/makeStyles/makeStyles";
 
 const useStyles = makeStyles(theme => ({
     card: {
-        margin: theme.spacing(1),
+        marginTop: theme.spacing(1),
+        '&:last-child': {
+            marginBottom: theme.spacing(1)
+        }
         // color: theme.palette.text.secondary,
     },
 }));
