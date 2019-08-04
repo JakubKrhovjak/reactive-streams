@@ -7,6 +7,8 @@ import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/styles/makeStyles";
 import {Card} from "@material-ui/core";
 
+import _ from "lodash";
+
 const useStyles = makeStyles(theme => ({
     valuationList: {
        margin: theme.spacing(1)
@@ -28,17 +30,17 @@ const ValuationList = ({fetchValuations, valuations}) => {
         fetchValuations();
     }, []);
 
-    return (
-        <Grid className={classes.valuationList} container justify={"center"}>
+    const a = () => {
+        return <Grid className={classes.valuationList} container justify={"center"}>
             <Card className={classes.content}>
-                <Grid >
-                    {valuations.map(valuation => {
-                        return <Valuation key={valuation.id} valuation={valuation}/>
-                    })}
+                <Grid>
+                    {_.keys(valuations).map(id => <Valuation key={id} valuation={valuations[id]}/>)}
                 </Grid>
             </Card>
         </Grid>
-    )
+    };
+
+    return a();
 
 
 };
