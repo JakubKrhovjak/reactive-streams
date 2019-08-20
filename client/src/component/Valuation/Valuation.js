@@ -1,7 +1,9 @@
 import React from 'react';
-import {Card, Typography} from "@material-ui/core";
 import CardContent from "@material-ui/core/CardContent";
+import {Card, Typography, Button} from "@material-ui/core";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import makeStyles from "@material-ui/styles/makeStyles/makeStyles";
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
 const useStyles = makeStyles(theme => ({
     valuation: {
@@ -29,6 +31,10 @@ export const Valuation = ({valuation}) => {
             <Typography>
                 {valuation.value}
             </Typography>
+            e
+            <Button variant="contained" color="secondary" >
+                <DeleteOutlinedIcon />
+            </Button>
         </CardContent>
         </Card>
     )
