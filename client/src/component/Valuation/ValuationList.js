@@ -11,12 +11,17 @@ import {keys} from "lodash";
 
 const useStyles = makeStyles(theme => ({
     valuationList: {
-       margin: theme.spacing(1)
+        padding: theme.spacing(1),
+        height: '100%',
+        paddingBottom: theme.spacing(4)
         // color: theme.palette.text.secondary,
     },
 
     content: {
-        padding: theme.spacing(1)
+        padding: theme.spacing(1),
+        height: '100%',
+        overflowY: 'scroll'
+
     }
 
 }));
@@ -31,6 +36,7 @@ const ValuationList = ({fetchValuations, valuations}) => {
     }, []);
 
     const a = () => {
+
         return <Grid className={classes.valuationList} container justify={"center"}>
             <Card className={classes.content}>
                 <Grid>
@@ -38,6 +44,7 @@ const ValuationList = ({fetchValuations, valuations}) => {
                 </Grid>
             </Card>
         </Grid>
+
     };
 
     return a();

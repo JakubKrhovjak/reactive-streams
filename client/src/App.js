@@ -13,12 +13,12 @@ function App() {
     return (
         <NoSsr>
             <ThemeProvider theme={theme}>
-                <div className="App">
-                    <Container maxWidth="xl">
+                {/*<div className="app">*/}
+                    <Container maxWidth="xl" style={{height: '100%'}}>
                         {/*<EventSourceView/>*/}
                         <Valuations/>
                     </Container>
-                </div>
+                {/*</div>*/}
             </ThemeProvider>
         </NoSsr>
     );

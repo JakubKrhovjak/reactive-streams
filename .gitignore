@@ -4,10 +4,12 @@ HELP.md
 
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
+.idea/libraries
 
 *.iws
 *.iml
 *.ipr
 
 
+client/yarn.lock
