@@ -2,6 +2,8 @@ import React from 'react';
 import CardContent from "@material-ui/core/CardContent";
 import {Card, Typography, Button} from "@material-ui/core";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CardActions from '@material-ui/core/CardActions';
+import CardHeader from '@material-ui/core/CardHeader';
 import makeStyles from "@material-ui/styles/makeStyles/makeStyles";
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
@@ -19,23 +21,26 @@ export const Valuation = ({valuation}) => {
 
     const classes = useStyles();
 
-    return(
+    return (
         <Card className={classes.valuation}>
-        <CardContent>
-            <Typography >
+
+            <Typography>
                 {valuation.name}
             </Typography>
-            <Typography>
-                {valuation.description}
-            </Typography>
-            <Typography>
-                {valuation.value}
-            </Typography>
-            e
-            <Button variant="contained" color="secondary" >
-                <DeleteOutlinedIcon />
-            </Button>
-        </CardContent>
+
+            <CardContent>
+                <Typography>
+                    {valuation.description}
+                </Typography>
+                <Typography>
+                    {valuation.value}
+                </Typography>
+            </CardContent>
+            <CardActions>
+                <Button variant="contained" color="secondary">
+                    <DeleteOutlinedIcon/>
+                </Button>
+            </CardActions>
         </Card>
     )
 };
