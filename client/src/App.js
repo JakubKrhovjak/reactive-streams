@@ -1,26 +1,23 @@
-import React from 'react';
+import React from "react";
 
-import EventSourceView from "./component/EventSource/EventSourceView";
+// import EventSourceView from "./component/EventSource/EventSourceView";
 import Valuations from "./component/Valuation/ValuationList";
-import {Container} from "@material-ui/core";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
-import NoSsr from '@material-ui/core/NoSsr';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+
+import Nav from "./component/Nav/Nav";
 
 const theme = createMuiTheme();
 
 function App() {
     return (
-        <NoSsr>
-            <ThemeProvider theme={theme}>
-                {/*<div className="app">*/}
-                    <Container maxWidth="xl" style={{height: '100%'}}>
-                        {/*<EventSourceView/>*/}
-                        <Valuations/>
-                    </Container>
-                {/*</div>*/}
-            </ThemeProvider>
-        </NoSsr>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {/*<EventSourceView/>*/}
+            <Nav />
+            {/*<Valuations />*/}
+        </ThemeProvider>
     );
 }
 

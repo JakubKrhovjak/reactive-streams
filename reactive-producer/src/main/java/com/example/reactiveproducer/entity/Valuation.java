@@ -1,14 +1,19 @@
 package com.example.reactiveproducer.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import lombok.Data;
-
-import javax.persistence.*;
 
 /**
  * @author Jakub krhovjak
  */
 @Entity
 @Data
+@JsonFormat
 public class Valuation {
 
     @Id
