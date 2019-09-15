@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(0, 1),
         ...theme.mixins.toolbar,
         justifyContent: 'flex-end',
+        background: theme.co
     },
     content: {
         flexGrow: 1,
@@ -79,6 +80,8 @@ const Nav = props => {
     const classes = useStyles();
 
     const [navOpen, setNavOpen] = useState(false);
+
+    const handleNav = () => setNavOpen(!navOpen)
 
     const sideList = side => (
         <div
@@ -115,10 +118,9 @@ const Nav = props => {
             })}>
                 <Toolbar>
                     {!navOpen &&  <IconButton
-                        onClick={() => setNavOpen(!navOpen)}
+                        onClick={handleNav}
                         edge="start"
                         color="inherit"
-                        aria-label="menu"
                     >
                         <MenuIcon />
 

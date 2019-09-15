@@ -80,10 +80,6 @@ public class ValuationController {
 
     }
 
-    public <S, D> D map(S o, Class<S> src,  Class<D> dest) {
-        BoundMapperFacade<S, D> mapperFacade = factory.getMapperFacade(src, dest);
-        return mapperFacade.map(o);
-    }
 
     List<ValuationResponse> measure(String label, Mapper mapper,  List<Valuation> all) {
         long start = System.nanoTime();

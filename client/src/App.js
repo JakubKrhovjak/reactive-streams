@@ -3,12 +3,13 @@ import React from "react";
 // import EventSourceView from "./component/EventSource/EventSourceView";
 import Valuations from "./component/Valuation/ValuationList";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
-import { createMuiTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import  {theme} from "./theme/theme";
+
 
 import Nav from "./component/Nav/Nav";
 
-const theme = createMuiTheme();
+
 
 function App() {
     return (
@@ -16,7 +17,7 @@ function App() {
             <CssBaseline />
             {/*<EventSourceView/>*/}
             <Nav />
-            {/*<Valuations />*/}
+            <Valuations />
         </ThemeProvider>
     );
 }
