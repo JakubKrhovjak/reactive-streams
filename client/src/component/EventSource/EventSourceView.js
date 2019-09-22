@@ -1,14 +1,18 @@
 import React, {Component, Fragment, useState, useEffect} from 'react';
-import ReactEventSource from 'react-eventsource'
-import axios from 'axios'
+
 
 const EventSourceView = (props) => {
 
     const [message, setMessage] = useState('init-message');
 
     useEffect(() => {
-        new EventSource('http://localhost:8280/flux-rest')
-            .addEventListener('message',  (message) => setMessage(message.data));
+        var evenSource = new EventSource('http://localhost:8082/flux-rest');
+        evenSource.addEventListener('message',  (event) => {
+                setMessage(event.data);
+                if(event.data === "FINISHED") {
+                    evenSource.close()
+                }
+            });
     }, []);
 
 
