@@ -14,7 +14,7 @@ import lombok.Data;
 @Entity
 @Data
 @JsonFormat
-public class Valuation {
+public class Valuation  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "valuation_id_seq")
@@ -22,6 +22,7 @@ public class Valuation {
     private Long id;
     private String name;
     private String description;
-    private int value;
+    private Integer value;
+    private String state;
 
 }
