@@ -1,15 +1,12 @@
-HELP.md
-/target/
-!.mvn/wrapper/maven-wrapper.jar
+# Created by .ignore support plugin (hsz.mobi)
 
+# User-specific stuff
+.idea/**
 
-### IntelliJ IDEA ###
-.idea/
-.idea/libraries
-
+# File-based project format
 *.iws
 *.iml
-*.ipr
 
+# IntelliJ
+out/
 
-client/yarn.lock
