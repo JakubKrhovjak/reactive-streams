@@ -6,7 +6,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 
 @SpringBootApplication
-
 public class ReactiveProducerApplication {
 
     public static void main(String[] args) {
