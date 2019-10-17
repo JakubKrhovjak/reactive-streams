@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
+
 public class SecController {
 
 
@@ -21,11 +22,4 @@ public class SecController {
     public String free() {
         return "ok";
     }
-
-
-
-
-
-
 }
-//commnet
