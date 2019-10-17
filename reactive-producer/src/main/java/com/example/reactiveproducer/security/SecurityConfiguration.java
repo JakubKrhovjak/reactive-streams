@@ -37,7 +37,6 @@ public class SecurityConfiguration  {
     }
 
 
-
     @Bean
     public MapReactiveUserDetailsService userDetailsService() {
         UserDetails user = User
