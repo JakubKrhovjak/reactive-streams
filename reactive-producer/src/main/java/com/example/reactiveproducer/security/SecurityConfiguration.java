@@ -2,7 +2,6 @@ package com.example.reactiveproducer.security;
 
 import javax.servlet.Filter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
@@ -57,8 +56,6 @@ public class SecurityConfiguration  {
 
         http.cors().and().csrf().disable();
         return http.authorizeExchange()
-            .pathMatchers("/**").permitAll()
-            .pathMatchers(HttpMethod.OPTIONS).permitAll()
             .pathMatchers("/free").permitAll()
             .pathMatchers("/basic").authenticated()
             .anyExchange()
