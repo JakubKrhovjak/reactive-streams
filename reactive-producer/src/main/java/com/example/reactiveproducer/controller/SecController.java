@@ -14,12 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class SecController {
 
-
-
-
-
-
-
     @GetMapping("basic")
     public String basic() {
         return "ok";
