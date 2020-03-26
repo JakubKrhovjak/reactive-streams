@@ -7,8 +7,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,10 +19,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 //@EnableReactiveMethodSecurity
 public class SecurityConfiguration  {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
     @Bean
     public OncePerRequestFilter testFilter() {
@@ -39,35 +37,31 @@ public class SecurityConfiguration  {
 
     @Bean
     public MapReactiveUserDetailsService userDetailsService() {
-        UserDetails user = User
-            .withUsername("user")
-            .password(passwordEncoder().encode("user"))
-//            .password("user")
+        UserDetails user =  User.withUsername("user")
+//            .password(passwordEncoder().encode("user"))
+            .password("user")
             .roles("USER")
             .build();
         return new MapReactiveUserDetailsService(user);
     }
-    //
-
-
-
 
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(
         ServerHttpSecurity http) {
-
         http.cors().and().csrf().disable();
         return http.authorizeExchange()
             .pathMatchers("/free").permitAll()
-            .pathMatchers("/basic").authenticated()
+            .pathMatchers("/basic").hasAuthority("ROLE_USER")
             .anyExchange()
-            .authenticated()
-
-
-//            .pathMatchers("/basic").authenticated()
+            .permitAll()
+//            .and()
+//            .formLogin()
             .and()
+            .csrf()
+            .disable()
             .build();
+
     }
 
 

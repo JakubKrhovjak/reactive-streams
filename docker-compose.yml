@@ -37,6 +37,13 @@ services:
     restart: always
 
 
+  mongodb:
+    image: bitnami/mongodb:latest
+    volumes:
+      - ./:/bitnami
+    restart: always
+
+
 
 
 
