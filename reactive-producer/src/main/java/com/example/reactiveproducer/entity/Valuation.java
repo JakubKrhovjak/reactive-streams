@@ -1,25 +1,22 @@
 package com.example.reactiveproducer.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import lombok.Data;
+import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 
 /**
  * @author Jakub krhovjak
  */
-@Entity
+
 @Data
-@JsonFormat
+@Accessors(chain = true)
+@Document
 public class Valuation  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "valuation_id_seq")
-    @SequenceGenerator(allocationSize = 1, name = "valuation_id_seq", sequenceName = "valuation_id_seq")
-    private Long id;
+    private String id;
     private String name;
     private String description;
     private Integer value;

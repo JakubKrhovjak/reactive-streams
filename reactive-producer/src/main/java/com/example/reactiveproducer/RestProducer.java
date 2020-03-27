@@ -2,8 +2,8 @@ package com.example.reactiveproducer;
 
 import com.example.reactiveproducer.repository.ValuationRepository;
 import java.time.Duration;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,13 +16,11 @@ import reactor.core.publisher.Flux;
  */
 @CrossOrigin
 @RestController
-
+@RequiredArgsConstructor
 @Slf4j
 public class RestProducer {
 
-    @Autowired
-    ValuationRepository valuationRepository;
-
+    private final ValuationRepository valuationRepository;
 
     @GetMapping(value = "/flux-rest", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> getRestMessage() {
@@ -30,7 +28,7 @@ public class RestProducer {
 
         return Flux.interval(Duration.ofSeconds(2))
             .onErrorContinue((e, value) -> log.info("Event Canceled!"))
-            .map(sequence -> valuationRepository.findAll().get(0).getState())
+            .map(sequence -> valuationRepository.findAll().blockFirst().getState())
             .doOnNext(signal -> {
                 log.info("onNext");
             })
