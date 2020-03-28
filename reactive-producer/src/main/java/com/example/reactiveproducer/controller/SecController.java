@@ -27,11 +27,9 @@ public class SecController {
     }
 
 
-
-
-
-
-
-
-
+    @GetMapping("login")
+    public String login() {
+        return "ok";
+    }
 }
+
