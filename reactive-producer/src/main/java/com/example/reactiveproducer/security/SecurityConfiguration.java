@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 
 
 /**
@@ -24,26 +23,6 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
-
-    @Bean
-    public MapReactiveUserDetailsService basicAuthService() {
-        UserDetails user = User.withUsername("user").password("{noop}password").roles("REST").build();
-        return new MapReactiveUserDetailsService(user);
-    }
-
-      @Bean
-      @Order(1)
-      public SecurityWebFilterChain basicAuthSecurityWebFilterChain(ServerHttpSecurity http) {
-          AuthenticationWebFilter authenticationJWT = new AuthenticationWebFilter(new UserDetailsRepositoryReactiveAuthenticationManager(basicAuthService()));
-        return http.csrf().disable()
-            .authenticationManager(new UserDetailsRepositoryReactiveAuthenticationManager(basicAuthService()))
-            .authorizeExchange()
-            .pathMatchers("/basic").authenticated()
-            .anyExchange().permitAll()
-            .and().httpBasic()
-            .and()
-            .build();
-    }
 
     @Bean
     public DbUserDetailService userDetailService() {
@@ -61,14 +40,34 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(2)
+    @Order(1)
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
-        AuthenticationWebFilter authenticationJWT = new AuthenticationWebFilter(dbAuthenticationManager());
+
         return http.csrf().disable()
             .authenticationManager(dbAuthenticationManager())
             .authorizeExchange()
             .pathMatchers("/login").authenticated()
             .anyExchange().permitAll()
+            .and().httpBasic()
+            .disable()
+            .build();
+    }
+
+    @Bean
+    public MapReactiveUserDetailsService basicAuthService() {
+        UserDetails user = User.withUsername("user").password("{noop}password").roles("REST").build();
+        return new MapReactiveUserDetailsService(user);
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityWebFilterChain basicAuthSecurityWebFilterChain(ServerHttpSecurity http) {
+        return http.csrf().disable()
+            .authenticationManager(new UserDetailsRepositoryReactiveAuthenticationManager(basicAuthService()))
+            .authorizeExchange()
+            .pathMatchers("/basic").authenticated()
+            .anyExchange().permitAll()
+            .and().httpBasic()
             .and()
             .build();
     }
