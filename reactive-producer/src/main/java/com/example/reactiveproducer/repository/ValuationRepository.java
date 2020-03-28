@@ -10,4 +10,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ValuationRepository extends ReactiveMongoRepository<Valuation, String> {
+
+//    @Tailable
+//    @Query("{'name : 2'}")
+//    Flux<Valuation> findValuation();
+
+
+
 }

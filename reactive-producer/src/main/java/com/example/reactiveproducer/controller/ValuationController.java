@@ -5,6 +5,7 @@ import com.example.reactiveproducer.repository.ValuationRepository;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.repository.Tailable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,15 +23,31 @@ import reactor.core.publisher.Flux;
 public class ValuationController {
 
     private final ValuationRepository valuationRepository;
+    Flux<Valuation> stream;
 
     @PostConstruct
-    public void init() {
-        Disposable dfsd = valuationRepository.save(new Valuation().setName("2").setDescription("3").setId("dfsd")).subscribe();
+    public void init() throws InterruptedException {
+//        Disposable dfsd = valuationRepository.save(new Valuation().setName("2").setDescription("3").setId("dfsd")).subscribe();
+        Disposable subscription;
+         stream = findAll();
+//        Flux<Valuation> stream = valuationRepository.findValuation();
+        stream.doOnNext(valuation -> System.err.println("---------" + valuation)).subscribe();
+//          Disposable dfsd = valuationRepository.save(new Valuation().setName("2").setDescription("3")).subscribe();
+//          Thread.sleep(2000);
+//     valuationRepository.save(new Valuation().setName("2").setDescription("4")).subscribe();
+    }
+
+
+    @Tailable
+    public Flux<Valuation> findAll() {
+        return valuationRepository.findAll();
     }
 
 
     @GetMapping("valuations")
     public Flux<Valuation> valuation() {
+        valuationRepository.save(new Valuation().setName("5").setDescription("4")).subscribe();
+//        stream.doOnNext(valuation -> System.err.println("---------" + valuation)).;
         return valuationRepository.findAll();
     }
 
