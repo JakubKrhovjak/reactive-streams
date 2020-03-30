@@ -4,16 +4,15 @@ import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 
 
 /**
@@ -42,35 +41,50 @@ public class SecurityConfiguration {
     @Bean
     @Order(1)
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
+        AuthenticationWebFilter authenticationJWT = new AuthenticationWebFilter(dbAuthenticationManager());
+        authenticationJWT.setAuthenticationSuccessHandler(new JWTAuthSuccessHandler());
 
         return http.csrf().disable()
-            .authenticationManager(dbAuthenticationManager())
+//            .authenticationManager(dbAuthenticationManager())
+//            .
+//            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
             .authorizeExchange()
-            .pathMatchers("/login").authenticated()
-            .anyExchange().permitAll()
-            .and().httpBasic()
-            .disable()
-            .build();
-    }
-
-    @Bean
-    public MapReactiveUserDetailsService basicAuthService() {
-        UserDetails user = User.withUsername("user").password("{noop}password").roles("REST").build();
-        return new MapReactiveUserDetailsService(user);
-    }
-
-    @Bean
-    @Order(2)
-    public SecurityWebFilterChain basicAuthSecurityWebFilterChain(ServerHttpSecurity http) {
-        return http.csrf().disable()
-            .authenticationManager(new UserDetailsRepositoryReactiveAuthenticationManager(basicAuthService()))
-            .authorizeExchange()
-            .pathMatchers("/basic").authenticated()
-            .anyExchange().permitAll()
-            .and().httpBasic()
+            .pathMatchers("/","/login", "/auth/**")
+            .permitAll()
             .and()
+            .addFilterAt(authenticationJWT, SecurityWebFiltersOrder.FIRST)
+            .authorizeExchange()
+            .pathMatchers(HttpMethod.POST, "/basic/**").authenticated()
+            .and()
+//            .addFilterAt(new JWTAuthWebFilter(), SecurityWebFiltersOrder.HTTP_BASIC);
+//            .logout().logoutUrl("/logout")
+//            .logoutHandler(new HeaderWriterServerLogoutHandler(
+//                new ClearSiteDataServerHttpHeadersWriter(
+//                    ClearSiteDataServerHttpHeadersWriter.Directive.CACHE,
+//                    ClearSiteDataServerHttpHeadersWriter.Directive.COOKIES,
+//                    ClearSiteDataServerHttpHeadersWriter.Directive.STORAGE)))
+//            .and()
             .build();
     }
+
+//    @Bean
+//    public MapReactiveUserDetailsService basicAuthService() {
+//        UserDetails user = User.withUsername("user").password("{noop}password").roles("REST").build();
+//        return new MapReactiveUserDetailsService(user);
+//    }
+//
+//    @Bean
+//    @Order(2)
+//    public SecurityWebFilterChain basicAuthSecurityWebFilterChain(ServerHttpSecurity http) {
+//        return http.csrf().disable()
+//            .authenticationManager(new UserDetailsRepositoryReactiveAuthenticationManager(basicAuthService()))
+//            .authorizeExchange()
+//            .pathMatchers("/basic/**").authenticated()
+//            .anyExchange().permitAll()
+//            .and().httpBasic()
+//            .and()
+//            .build();
+//    }
 
 
 }
