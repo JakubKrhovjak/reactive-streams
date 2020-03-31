@@ -3,7 +3,6 @@ package com.example.reactiveproducer.security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -41,16 +40,13 @@ public class JWTAuthWebFilter implements WebFilter {
 
   private ServerWebExchangeMatcher getAuthMatcher(){
     List<ServerWebExchangeMatcher> matchers = new ArrayList<>(2);
-    matchers.add(new PathPatternParserServerWebExchangeMatcher("/api/movie/**", HttpMethod.GET));
-    matchers.add(new PathPatternParserServerWebExchangeMatcher("/api/movie/**", HttpMethod.POST));
+    matchers.add(new PathPatternParserServerWebExchangeMatcher("/basic/**"));
 
     ServerWebExchangeMatcher authMatcher = ServerWebExchangeMatchers.matchers(new OrServerWebExchangeMatcher(matchers));
     return authMatcher;
   }
 
-  private Mono<Void> authenticate(
-      ServerWebExchange exchange,
-                                  WebFilterChain chain, Authentication token) {
+  private Mono<Void> authenticate(ServerWebExchange exchange, WebFilterChain chain, Authentication token) {
     WebFilterExchange webFilterExchange = new WebFilterExchange(exchange, chain);
     return this.reactiveAuthManager.authenticate(token)
       .flatMap(authentication -> onAuthSuccess(authentication, webFilterExchange));

@@ -4,7 +4,6 @@ import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -54,16 +53,10 @@ public class SecurityConfiguration {
             .and()
             .addFilterAt(authenticationJWT, SecurityWebFiltersOrder.FIRST)
             .authorizeExchange()
-            .pathMatchers(HttpMethod.POST, "/basic/**").authenticated()
+            .anyExchange().authenticated()
             .and()
-//            .addFilterAt(new JWTAuthWebFilter(), SecurityWebFiltersOrder.HTTP_BASIC);
-//            .logout().logoutUrl("/logout")
-//            .logoutHandler(new HeaderWriterServerLogoutHandler(
-//                new ClearSiteDataServerHttpHeadersWriter(
-//                    ClearSiteDataServerHttpHeadersWriter.Directive.CACHE,
-//                    ClearSiteDataServerHttpHeadersWriter.Directive.COOKIES,
-//                    ClearSiteDataServerHttpHeadersWriter.Directive.STORAGE)))
-//            .and()
+             .addFilterAt(new JWTAuthWebFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
+
             .build();
     }
 

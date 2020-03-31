@@ -1,6 +1,10 @@
 package com.example.reactiveproducer.security;
 
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -11,12 +15,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -89,10 +91,10 @@ public class JWTUtil {
     } catch (ParseException e) {
       return null;
     }
-    List authorities = Stream.of(auths.split(","))
-      .map(a -> new SimpleGrantedAuthority(a))
-      .collect(Collectors.toList());
+//    List authorities = Stream.of(auths.split(","))
+//      .map(a -> new SimpleGrantedAuthority(a))
+//      .collect(Collectors.toList());
 
-    return new UsernamePasswordAuthenticationToken(subject, null, authorities);
+    return new UsernamePasswordAuthenticationToken(subject, null, List.of());
   }
 }
