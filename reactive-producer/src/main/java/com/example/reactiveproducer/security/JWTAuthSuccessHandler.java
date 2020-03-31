@@ -27,8 +27,9 @@ public class JWTAuthSuccessHandler implements ServerAuthenticationSuccessHandler
     }
 
     private static String tokenFromAuthentication(Authentication authentication){
-        return JWTUtil.generateToken(
-            authentication.getName(),
-            authentication.getAuthorities());
+        return "ahoj";
+//        return JWTUtil.generateToken(
+//            authentication.getName(),
+//            authentication.getAuthorities());
     }
 }

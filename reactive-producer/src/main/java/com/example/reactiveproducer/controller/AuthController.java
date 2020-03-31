@@ -1,6 +1,6 @@
 package com.example.reactiveproducer.controller;
 
-import com.example.reactiveproducer.security.JWTUtil;
+import com.example.reactiveproducer.service.AuthService;
 import com.example.reactiveproducer.service.DbUserDetailService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +25,14 @@ import static org.springframework.http.ResponseEntity.ok;
 public class AuthController {
 
     private final DbUserDetailService userDetailService;
+    private final AuthService authService;
 
     @PostMapping("/auth")
     public Mono<ResponseEntity<AuthResponse>> authenticate(@RequestBody AuthRequest authRequest) {
         UserDetails block = userDetailService.findByUsername(authRequest.getUsername()).block();
         return userDetailService.findByUsername(authRequest.getUsername())
             .map(user -> ok().contentType(APPLICATION_JSON_UTF8).body(
-                new AuthResponse(JWTUtil.generateToken(user.getUsername(), user.getAuthorities()), user.getUsername()))
+                new AuthResponse(user.getUsername(), authService.generateToken(user)))
             )
             .defaultIfEmpty(notFound().build());
     }
