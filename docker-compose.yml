@@ -43,7 +43,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./:/bitnami
+      - ./mongo-data:/bitnami
     restart: always
 
 

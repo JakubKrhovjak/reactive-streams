@@ -1,7 +1,6 @@
 package com.example.reactiveproducer.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -39,7 +38,7 @@ public class User implements UserDetails {
     private boolean active = true;
 
     @Builder.Default
-    private List<String> roles = new ArrayList<>();
+    private List<String> roles = List.of("USER");
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
