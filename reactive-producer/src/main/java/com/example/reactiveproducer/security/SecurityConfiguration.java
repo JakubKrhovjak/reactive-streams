@@ -1,6 +1,6 @@
 package com.example.reactiveproducer.security;
 
-import com.example.reactiveproducer.security.jwt.AuthWebFilter;
+import com.example.reactiveproducer.security.jwt.JwtAuthWebFilter;
 import com.example.reactiveproducer.security.jwt.JwtAuthenticator;
 import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +42,7 @@ public class SecurityConfiguration {
 
     @Bean
     public WebFilter authWebFilter() {
-        return new AuthWebFilter(dbAuthenticationManager(), authService());
+        return new JwtAuthWebFilter(dbAuthenticationManager(), authService());
     }
 
     @Bean
