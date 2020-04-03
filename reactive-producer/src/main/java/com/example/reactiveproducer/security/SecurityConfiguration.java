@@ -1,7 +1,8 @@
 package com.example.reactiveproducer.security;
 
-import com.example.reactiveproducer.security.jwt.JwtAuthWebFilter;
+import com.example.reactiveproducer.security.jwt.JwtAuthenticationWebFilter;
 import com.example.reactiveproducer.security.jwt.JwtAuthenticator;
+import com.example.reactiveproducer.security.jwt.JwtAuthorizationFilter;
 import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,8 @@ import org.springframework.web.server.WebFilter;
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
 
+    public static final String JWT_AUTH_TOKEN = "jwt-auth-token";
+
     @Bean
     public DbUserDetailService userDetailService() {
       return new DbUserDetailService();
@@ -41,8 +44,13 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public WebFilter authWebFilter() {
-        return new JwtAuthWebFilter(dbAuthenticationManager(), authService());
+    public WebFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationWebFilter(dbAuthenticationManager(), authService());
+    }
+
+    @Bean
+    public WebFilter authorizationFilter() {
+        return new JwtAuthorizationFilter();
     }
 
     @Bean
@@ -57,19 +65,14 @@ public class SecurityConfiguration {
         authenticationJWT.setAuthenticationSuccessHandler(new JWTAuthSuccessHandler());
 
         return http.csrf().disable()
-            .authenticationManager(dbAuthenticationManager())
-//            .
-//            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+//            .authenticationManager(dbAuthenticationManager())
             .authorizeExchange()
-//            .pathMatchers("/","/login", "/auth/**")
-//            .permitAll()
             .and()
-            .addFilterAt(authWebFilter(), SecurityWebFiltersOrder.FIRST)
+            .addFilterAt(jwtAuthenticationFilter(), SecurityWebFiltersOrder.FIRST)
+            .addFilterAfter(authorizationFilter(), SecurityWebFiltersOrder.FIRST)
             .authorizeExchange()
             .anyExchange().authenticated()
             .and()
-//             .addFilterAt(new JWTAuthWebFilter(), SecurityWebFiltersOrder.HTTP_BASIC)
-
             .build();
     }
 

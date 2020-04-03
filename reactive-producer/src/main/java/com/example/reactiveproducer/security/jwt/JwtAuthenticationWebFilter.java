@@ -16,19 +16,21 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import static com.example.reactiveproducer.security.SecurityConfiguration.JWT_AUTH_TOKEN;
+
 
 /**
  * Created by Jakub krhovják on 4/1/20.
  */
 
 
-public class JwtAuthWebFilter implements WebFilter {
+public class JwtAuthenticationWebFilter implements WebFilter {
 
     private JwtAuthenticator authService;
     private  ReactiveAuthenticationManager authenticationManager;
     private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
-    public JwtAuthWebFilter(ReactiveAuthenticationManager authenticationManager, JwtAuthenticator authService) {
+    public JwtAuthenticationWebFilter(ReactiveAuthenticationManager authenticationManager, JwtAuthenticator authService) {
         this.authenticationManager = authenticationManager;
         this.authService = authService;
     }
@@ -49,7 +51,7 @@ public class JwtAuthWebFilter implements WebFilter {
       exchange.getExchange()
             .getResponse()
             .getHeaders()
-            .add("JWT_AUTH_TOKEN", authService.generateToken("test"));
+            .add(JWT_AUTH_TOKEN, authService.generateToken("test"));
       return Mono.empty();
 
     }
