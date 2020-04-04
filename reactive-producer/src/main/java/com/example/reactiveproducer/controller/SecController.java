@@ -11,17 +11,14 @@ import reactor.core.publisher.Mono;
  */
 
 @RestController
-
-
-
 public class SecController {
 
-    @GetMapping("basic")
+    @GetMapping("/basic")
     public String basic(Mono<Principal> principal) {
         return "ok";
     }
 
-    @GetMapping("free")
+    @GetMapping("/free")
     public String free() {
         return "ok";
     }

@@ -26,11 +26,11 @@ import static com.example.reactiveproducer.security.SecurityConfiguration.JWT_AU
 
 public class JwtAuthenticationWebFilter implements WebFilter {
 
-    private JwtAuthenticator authService;
-    private  ReactiveAuthenticationManager authenticationManager;
+    private JwtUtils authService;
+    private ReactiveAuthenticationManager authenticationManager;
     private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
-    public JwtAuthenticationWebFilter(ReactiveAuthenticationManager authenticationManager, JwtAuthenticator authService) {
+    public JwtAuthenticationWebFilter(ReactiveAuthenticationManager authenticationManager, JwtUtils authService) {
         this.authenticationManager = authenticationManager;
         this.authService = authService;
     }

@@ -1,11 +1,13 @@
 package com.example.reactiveproducer.security;
 
+import com.example.reactiveproducer.security.jwt.JwtAuthenticationManager;
 import com.example.reactiveproducer.security.jwt.JwtAuthenticationWebFilter;
-import com.example.reactiveproducer.security.jwt.JwtAuthenticator;
-import com.example.reactiveproducer.security.jwt.JwtAuthorizationFilter;
+import com.example.reactiveproducer.security.jwt.JwtUtils;
+import com.example.reactiveproducer.security.jwt.SecurityContextRepository;
 import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -43,30 +45,34 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @Primary
+    public ReactiveAuthenticationManager jwtAuthenticationManager() {
+        return new JwtAuthenticationManager();
+    }
+
+    @Bean
     public WebFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationWebFilter(dbAuthenticationManager(), authService());
+        return new JwtAuthenticationWebFilter(dbAuthenticationManager(), jwtUtils());
     }
 
     @Bean
-    public WebFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter();
+    public JwtUtils jwtUtils() {
+        return new JwtUtils();
     }
 
     @Bean
-    public JwtAuthenticator authService() {
-        return new JwtAuthenticator();
+    public SecurityContextRepository securityContextRepository() {
+        return new SecurityContextRepository();
     }
 
     @Bean
     @Order(1)
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
-        return http.csrf().disable()
-            .authenticationManager(dbAuthenticationManager())
+        return http.csrf().disable().cors().disable()
             .authorizeExchange()
             .and()
+            .securityContextRepository(securityContextRepository())
             .addFilterAt(jwtAuthenticationFilter(), SecurityWebFiltersOrder.FIRST)
-            .addFilterAfter(jwtAuthorizationFilter(), SecurityWebFiltersOrder.FIRST)
-
             .authorizeExchange()
             .anyExchange().hasAuthority("USER")
             .and()

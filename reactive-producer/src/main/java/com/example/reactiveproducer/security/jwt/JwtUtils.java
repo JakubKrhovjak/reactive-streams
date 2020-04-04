@@ -27,7 +27,7 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import static com.example.reactiveproducer.security.jwt.JwtAuthenticator.AuthCredential.UNAUTHORIZED;
+import static com.example.reactiveproducer.security.jwt.JwtUtils.AuthCredential.UNAUTHORIZED;
 
 
 /**
@@ -35,7 +35,7 @@ import static com.example.reactiveproducer.security.jwt.JwtAuthenticator.AuthCre
  */
 
 @Slf4j
-public class JwtAuthenticator {
+public class JwtUtils {
 
     @Value("${jwt-secret-key}")
     private String jwtSecretKey;
@@ -63,11 +63,11 @@ public class JwtAuthenticator {
             .setHeaderParam("typ", TOKEN_TYPE)
             .setIssuer(TOKEN_ISSUER)
             .setAudience(TOKEN_AUDIENCE)
-            .setSubject(username)
+            .setSubject("test")
             .setExpiration(new Date(System.currentTimeMillis() + 864000000))
-            //            .claim("rol", roles)
+            .claim("rol", List.of("USER"))
             .compact();
-        //            .;
+       //            .;
     }
 
     public Mono<? extends Authentication> getAuthentication(ServerWebExchange exchange) {
@@ -79,30 +79,25 @@ public class JwtAuthenticator {
     private Mono<AuthCredential> extractCredential(ServerWebExchange exchange) {
         return Mono.justOrEmpty(exchange)
             .map(this::getAuthPayload)
-            .map(auth ->  getToken(auth, AuthType.BASIC))
+            .map(auth -> getToken(auth, AuthType.BASIC))
             .map(this::decode)
             .map(this::getCredential);
     }
 
-    public Mono<Jws<Claims>> getClaims(ServerWebExchange exchange) {
-        return Mono.justOrEmpty(exchange)
-            .map(this::getAuthPayload)
-            .map(auth -> getToken(auth, AuthType.BEARER))
+    public Mono<Jws<Claims>> getClaims(Authentication authentication) {
+        return Mono.justOrEmpty(authentication)
+            .map(auth -> getToken(auth.getCredentials().toString(), AuthType.BEARER))
             .flatMap(this::parseJwtToken);
     }
 
     public Mono<Authentication> getAuthorization(Jws<Claims> claims) {
-        var username = claims
-            .getBody()
-            .getSubject();
-
+        String username = claims.getBody().getSubject();
         var authorities = ((List<?>) claims.getBody()
             .get("rol")).stream()
             .map(authority -> new SimpleGrantedAuthority((String) authority))
             .collect(Collectors.toList());
-
-       return Mono.just(new UsernamePasswordAuthenticationToken(username, null, authorities));
-    }
+        return Mono.just(new UsernamePasswordAuthenticationToken(username, null, authorities));
+   }
 
     private String getAuthPayload(ServerWebExchange exchange) {
         String auth = exchange.getRequest()
@@ -113,7 +108,7 @@ public class JwtAuthenticator {
     }
 
     private String getToken(String auth, AuthType type) {
-        return auth.replace(type.value(),  StringUtils.EMPTY).trim();
+        return auth.replace(type.value(), StringUtils.EMPTY).trim();
     }
 
     private String decode(String token) {
@@ -128,15 +123,17 @@ public class JwtAuthenticator {
 
     private Mono<Jws<Claims>> parseJwtToken(String jwtToken) {
         try {
-           return Mono.just(Jwts.parser()
-                .setSigningKey(Base64.getEncoder().encode(jwtSecretKey.getBytes()))
+            return Mono.just(Jwts.parserBuilder()
+                .setSigningKey(jwtSecretKey.getBytes())
+                .requireIssuer(TOKEN_ISSUER)
+                .requireAudience(TOKEN_AUDIENCE)
+                .build()
                 .parseClaimsJws(jwtToken));
         } catch (Exception e) {
             return Mono.empty();
         }
 
     }
-
 
     @Data
     @RequiredArgsConstructor

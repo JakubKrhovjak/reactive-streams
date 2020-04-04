@@ -37,6 +37,7 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean active = true;
 
+
     @Builder.Default
     private List<String> roles = List.of("USER");
 
