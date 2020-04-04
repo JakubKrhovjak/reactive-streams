@@ -61,13 +61,14 @@ public class SecurityConfiguration {
     @Order(1)
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
         return http.csrf().disable()
-//            .authenticationManager(dbAuthenticationManager())
+            .authenticationManager(dbAuthenticationManager())
             .authorizeExchange()
             .and()
             .addFilterAt(jwtAuthenticationFilter(), SecurityWebFiltersOrder.FIRST)
-//            .addFilterAfter(jwtAuthorizationFilter(), SecurityWebFiltersOrder.FIRST)
+            .addFilterAfter(jwtAuthorizationFilter(), SecurityWebFiltersOrder.FIRST)
+
             .authorizeExchange()
-            .anyExchange().authenticated()
+            .anyExchange().hasAuthority("USER")
             .and()
             .build();
     }

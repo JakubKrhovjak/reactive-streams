@@ -1,21 +1,29 @@
 package com.example.reactiveproducer.security.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.impl.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.authentication.ServerAuthenticationEntryPointFailureHandler;
+import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -37,13 +45,17 @@ public class JwtAuthenticator {
         BEARER;
 
         public String value() {
-            return StringUtils.capitalize(name());
+            return StringUtil.capitalize(name().toLowerCase());
         }
     }
 
     public static final String TOKEN_TYPE = "JWT";
+
     public static final String TOKEN_ISSUER = "secure-api";
+
     public static final String TOKEN_AUDIENCE = "secure-app";
+
+    private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
     public String generateToken(String username) {
         return Jwts.builder()
@@ -66,30 +78,42 @@ public class JwtAuthenticator {
 
     private Mono<AuthCredential> extractCredential(ServerWebExchange exchange) {
         return Mono.justOrEmpty(exchange)
-            .map(m -> getAuthPayload(exchange))
-            .filter(Objects::nonNull)
-            .map(auth -> getToken(auth, AuthType.BASIC))
+            .map(this::getAuthPayload)
+            .map(auth ->  getToken(auth, AuthType.BASIC))
             .map(this::decode)
             .map(this::getCredential);
     }
 
-//    public Mono<Authentication> authorize(ServerWebExchange exchange) {
-//        Mono.justOrEmpty(exchange)
-//            .map(m -> getAuthPayload(exchange))
-//            .filter(Objects::nonNull)
-//            .map(auth -> getToken(auth, AuthType.BEARER))
-//
-//
-//    }
+    public Mono<Jws<Claims>> getClaims(ServerWebExchange exchange) {
+        return Mono.justOrEmpty(exchange)
+            .map(this::getAuthPayload)
+            .map(auth -> getToken(auth, AuthType.BEARER))
+            .flatMap(this::parseJwtToken);
+    }
+
+    public Mono<Authentication> getAuthorization(Jws<Claims> claims) {
+        var username = claims
+            .getBody()
+            .getSubject();
+
+        var authorities = ((List<?>) claims.getBody()
+            .get("rol")).stream()
+            .map(authority -> new SimpleGrantedAuthority((String) authority))
+            .collect(Collectors.toList());
+
+       return Mono.just(new UsernamePasswordAuthenticationToken(username, null, authorities));
+    }
 
     private String getAuthPayload(ServerWebExchange exchange) {
-        return exchange.getRequest()
+        String auth = exchange.getRequest()
             .getHeaders()
             .getFirst(HttpHeaders.AUTHORIZATION);
+
+        return auth == null ? StringUtils.EMPTY : auth;
     }
 
     private String getToken(String auth, AuthType type) {
-        return auth.substring(type.value().length()).trim();
+        return auth.replace(type.value(),  StringUtils.EMPTY).trim();
     }
 
     private String decode(String token) {
@@ -102,8 +126,16 @@ public class JwtAuthenticator {
         return new AuthCredential(split[0], split[1]);
     }
 
-//    private Jws<Claims>
+    private Mono<Jws<Claims>> parseJwtToken(String jwtToken) {
+        try {
+           return Mono.just(Jwts.parser()
+                .setSigningKey(Base64.getEncoder().encode(jwtSecretKey.getBytes()))
+                .parseClaimsJws(jwtToken));
+        } catch (Exception e) {
+            return Mono.empty();
+        }
 
+    }
 
 
     @Data
