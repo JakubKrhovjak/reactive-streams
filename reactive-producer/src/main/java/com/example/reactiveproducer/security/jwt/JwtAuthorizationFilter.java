@@ -21,12 +21,12 @@ public class JwtAuthorizationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        return getAuthMatcher().matches(exchange)
-            .filter(m -> !m.isMatch())
-            .flatMap(matchResult -> JwtAuthenticator.getAuthentication(exchange))
-
-            .flatMap(e -> chain.filter(exchange));
-        return null;
+//        return getAuthMatcher().matches(exchange)
+//            .filter(m -> !m.isMatch())
+//            .flatMap(matchResult -> JwtAuthenticator.getAuthentication(exchange))
+//
+//            .flatMap(e -> chain.filter(exchange));
+        return Mono.empty();
     }
 
 

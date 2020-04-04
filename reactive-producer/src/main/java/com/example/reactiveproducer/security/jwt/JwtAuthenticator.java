@@ -39,13 +39,10 @@ public class JwtAuthenticator {
         public String value() {
             return StringUtils.capitalize(name());
         }
-
     }
 
     public static final String TOKEN_TYPE = "JWT";
-
     public static final String TOKEN_ISSUER = "secure-api";
-
     public static final String TOKEN_AUDIENCE = "secure-app";
 
     public String generateToken(String username) {
@@ -65,7 +62,6 @@ public class JwtAuthenticator {
         return extractCredential(exchange)
             .map(credential -> new UsernamePasswordAuthenticationToken(credential.username, credential.password))
             .onErrorReturn(new UsernamePasswordAuthenticationToken(UNAUTHORIZED.username, UNAUTHORIZED.password));
-
     }
 
     private Mono<AuthCredential> extractCredential(ServerWebExchange exchange) {
@@ -76,6 +72,15 @@ public class JwtAuthenticator {
             .map(this::decode)
             .map(this::getCredential);
     }
+
+//    public Mono<Authentication> authorize(ServerWebExchange exchange) {
+//        Mono.justOrEmpty(exchange)
+//            .map(m -> getAuthPayload(exchange))
+//            .filter(Objects::nonNull)
+//            .map(auth -> getToken(auth, AuthType.BEARER))
+//
+//
+//    }
 
     private String getAuthPayload(ServerWebExchange exchange) {
         return exchange.getRequest()
@@ -97,13 +102,9 @@ public class JwtAuthenticator {
         return new AuthCredential(split[0], split[1]);
     }
 
-    public Mono<Authentication> authorize(ServerWebExchange exchange) {
-        Mono.justOrEmpty(exchange)
-            .map(m -> getAuthPayload(exchange))
-            .filter(Objects::nonNull)
-            .map(auth -> getToken(auth, AuthType.BEARER)
+//    private Jws<Claims>
 
-    }
+
 
     @Data
     @RequiredArgsConstructor
