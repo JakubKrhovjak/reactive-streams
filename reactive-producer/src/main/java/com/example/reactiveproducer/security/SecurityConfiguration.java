@@ -2,23 +2,22 @@ package com.example.reactiveproducer.security;
 
 import com.example.reactiveproducer.security.jwt.AuthUtils;
 import com.example.reactiveproducer.security.jwt.JwtAuthenticationManager;
-import com.example.reactiveproducer.security.jwt.JwtAuthenticationWebFilter;
 import com.example.reactiveproducer.security.jwt.SecurityContextRepository;
 import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.server.WebFilter;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -41,20 +40,11 @@ public class SecurityConfiguration {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Bean
-    public ReactiveAuthenticationManager dbAuthenticationManager() {
-        return new DbAuthenticationManager(passwordEncoder(), userDetailService());
-    }
 
     @Bean
     @Primary
     public ReactiveAuthenticationManager jwtAuthenticationManager() {
         return new JwtAuthenticationManager();
-    }
-
-    @Bean
-    public WebFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationWebFilter(dbAuthenticationManager(), jwtUtils());
     }
 
     @Bean
@@ -84,11 +74,22 @@ public class SecurityConfiguration {
             .cors().configurationSource(urlBasedCorsConfigurationSource)
 //            .cors().disable()
     .and()
+            .exceptionHandling()
+            .authenticationEntryPoint((swe, e) -> {
+                return Mono.fromRunnable(() -> {
+                    swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                });
+            }).accessDeniedHandler((swe, e) -> {
+                return Mono.fromRunnable(() -> {
+                    swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                });
+            })
+            .and()
             .authorizeExchange()
             .and()
             .securityContextRepository(securityContextRepository())
-            .addFilterAt(jwtAuthenticationFilter(), SecurityWebFiltersOrder.FIRST)
             .authorizeExchange()
+            .pathMatchers("/auth").permitAll()
             .anyExchange().hasAuthority("USER")
             .and()
             .build();

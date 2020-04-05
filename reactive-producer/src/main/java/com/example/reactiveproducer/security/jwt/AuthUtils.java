@@ -41,7 +41,7 @@ public class AuthUtils {
     @Value("${jwt.token-valididy}")
     private long tokenValidity;
 
-    enum AuthType {
+    public enum AuthType {
         BASIC,
         BEARER;
 
@@ -56,7 +56,6 @@ public class AuthUtils {
     public static final String ROLES = "roles";
 
     public String generateToken(Authentication authentication) {
-        List<? extends GrantedAuthority> authorities = (List<? extends GrantedAuthority>) authentication.getAuthorities();
         return Jwts.builder()
             .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes()), SignatureAlgorithm.HS512)
             .setHeaderParam("typ", TOKEN_TYPE)
@@ -107,12 +106,12 @@ public class AuthUtils {
         return auth.replace(type.value(), StringUtils.EMPTY).trim();
     }
 
-    private String decode(String token) {
+    public String decode(String token) {
         byte[] credDecoded = Base64.getDecoder().decode(token);
         return new String(credDecoded, StandardCharsets.UTF_8);
     }
 
-    private AuthCredential getCredential(String token) {
+    public AuthCredential getCredential(String token) {
         String[] split = token.split(":");
         return new AuthCredential(split[0], split[1]);
     }
