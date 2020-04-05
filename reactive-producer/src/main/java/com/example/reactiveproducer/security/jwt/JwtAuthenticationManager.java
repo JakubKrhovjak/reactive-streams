@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
 
     @Autowired
-    private JwtUtils jwtAuthenticator;
+    private AuthUtils jwtAuthenticator;
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {

@@ -20,14 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
-import org.springframework.security.web.server.authentication.ServerAuthenticationEntryPointFailureHandler;
-import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import static com.example.reactiveproducer.security.jwt.JwtUtils.AuthCredential.UNAUTHORIZED;
+import static com.example.reactiveproducer.security.jwt.AuthUtils.AuthCredential.UNAUTHORIZED;
 
 
 /**
@@ -35,7 +33,7 @@ import static com.example.reactiveproducer.security.jwt.JwtUtils.AuthCredential.
  */
 
 @Slf4j
-public class JwtUtils {
+public class AuthUtils {
 
     @Value("${jwt-secret-key}")
     private String jwtSecretKey;
@@ -50,24 +48,23 @@ public class JwtUtils {
     }
 
     public static final String TOKEN_TYPE = "JWT";
-
     public static final String TOKEN_ISSUER = "secure-api";
-
     public static final String TOKEN_AUDIENCE = "secure-app";
+    public static final String ROLES = "roles";
 
-    private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
-
-    public String generateToken(String username) {
+    public String generateToken(Authentication authentication) {
+        List<? extends GrantedAuthority> authorities = (List<? extends GrantedAuthority>) authentication.getAuthorities();
         return Jwts.builder()
             .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes()), SignatureAlgorithm.HS512)
             .setHeaderParam("typ", TOKEN_TYPE)
             .setIssuer(TOKEN_ISSUER)
             .setAudience(TOKEN_AUDIENCE)
-            .setSubject("test")
+            .setSubject(authentication.getName())
             .setExpiration(new Date(System.currentTimeMillis() + 864000000))
-            .claim("rol", List.of("USER"))
+            .claim(ROLES, authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()))
             .compact();
-       //            .;
     }
 
     public Mono<? extends Authentication> getAuthentication(ServerWebExchange exchange) {
@@ -92,12 +89,8 @@ public class JwtUtils {
 
     public Mono<Authentication> getAuthorization(Jws<Claims> claims) {
         String username = claims.getBody().getSubject();
-        var authorities = ((List<?>) claims.getBody()
-            .get("rol")).stream()
-            .map(authority -> new SimpleGrantedAuthority((String) authority))
-            .collect(Collectors.toList());
-        return Mono.just(new UsernamePasswordAuthenticationToken(username, null, authorities));
-   }
+        return Mono.just(new UsernamePasswordAuthenticationToken(username, null, getAuthorities(claims)));
+    }
 
     private String getAuthPayload(ServerWebExchange exchange) {
         String auth = exchange.getRequest()
@@ -133,6 +126,12 @@ public class JwtUtils {
             return Mono.empty();
         }
 
+    }
+
+    private List<? extends GrantedAuthority> getAuthorities(Jws<Claims> claims) {
+       return ((List<String>) claims.getBody()
+            .get(ROLES)).stream().map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
     }
 
     @Data
