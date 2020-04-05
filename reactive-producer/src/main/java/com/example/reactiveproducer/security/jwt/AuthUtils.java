@@ -23,10 +23,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import static com.example.reactiveproducer.security.jwt.AuthUtils.AuthCredential.UNAUTHORIZED;
 
 
 /**
@@ -55,32 +54,18 @@ public class AuthUtils {
     public static final String TOKEN_AUDIENCE = "secure-app";
     public static final String ROLES = "roles";
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(UserDetails details) {
         return Jwts.builder()
             .signWith(Keys.hmacShaKeyFor(jwtSecretKey.getBytes()), SignatureAlgorithm.HS512)
             .setHeaderParam("typ", TOKEN_TYPE)
             .setIssuer(TOKEN_ISSUER)
             .setAudience(TOKEN_AUDIENCE)
-            .setSubject(authentication.getName())
+            .setSubject(details.getUsername())
             .setExpiration(Date.from(Instant.now().plusMillis(tokenValidity)))
-            .claim(ROLES, authentication.getAuthorities().stream()
+            .claim(ROLES, details.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()))
             .compact();
-    }
-
-    public Mono<? extends Authentication> getAuthentication(ServerWebExchange exchange) {
-        return extractCredential(exchange)
-            .map(credential -> new UsernamePasswordAuthenticationToken(credential.username, credential.password))
-            .onErrorReturn(new UsernamePasswordAuthenticationToken(UNAUTHORIZED.username, UNAUTHORIZED.password));
-    }
-
-    private Mono<AuthCredential> extractCredential(ServerWebExchange exchange) {
-        return Mono.justOrEmpty(exchange)
-            .map(this::getAuthPayload)
-            .map(auth -> getToken(auth, AuthType.BASIC))
-            .map(this::decode)
-            .map(this::getCredential);
     }
 
     public Mono<Jws<Claims>> getClaims(Authentication authentication) {
