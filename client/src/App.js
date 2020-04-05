@@ -7,14 +7,19 @@ import  {theme} from "./theme/theme";
 
 
 import Nav from "./component/Nav/Nav";
+import { Login } from "./component/Login/Login";
+import Container from "@material-ui/core/Container";
 
 
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <EventSourceView/>
+            {/*<CssBaseline />*/}
+            {/*<Container fixed>*/}
+            <Login/>
+                {/*</Container>*/}
+            {/*<EventSourceView/>*/}
             {/*<Nav />*/}
             {/*<Valuations />*/}
         </ThemeProvider>
