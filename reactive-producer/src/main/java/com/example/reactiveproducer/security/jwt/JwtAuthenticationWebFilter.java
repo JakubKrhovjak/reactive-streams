@@ -1,5 +1,6 @@
 package com.example.reactiveproducer.security.jwt;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -24,6 +26,7 @@ import static com.example.reactiveproducer.security.SecurityConfiguration.JWT_AU
  */
 
 
+@CrossOrigin("*")
 public class JwtAuthenticationWebFilter implements WebFilter {
 
     private AuthUtils authService;
@@ -48,11 +51,22 @@ public class JwtAuthenticationWebFilter implements WebFilter {
    }
 
     private Mono<Void> onAuthenticationSuccess(Authentication authentication,  WebFilterExchange  exchange) {
-      exchange.getExchange()
+        HttpHeaders headers = exchange.getExchange()
             .getResponse()
-            .getHeaders()
-            .add(JWT_AUTH_TOKEN, authService.generateToken(authentication));
-      return Mono.empty();
+            .getHeaders();
+
+
+
+        headers.add(JWT_AUTH_TOKEN, authService.generateToken(authentication));
+
+
+        headers.add("Access-Control-Allow-Origin", "*");
+//        headers.add("Access-Control-Allow-Methods", "*");
+//        headers.add("Access-Control-Allow-Headers", "*");
+        headers.add("Access-Control-Expose-Headers", "*");
+//        headers.add("Access-Control-Allow-Credentials", "true");
+
+        return Mono.empty();
 
     }
 

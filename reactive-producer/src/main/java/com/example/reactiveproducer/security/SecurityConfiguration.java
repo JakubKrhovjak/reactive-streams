@@ -1,8 +1,8 @@
 package com.example.reactiveproducer.security;
 
+import com.example.reactiveproducer.security.jwt.AuthUtils;
 import com.example.reactiveproducer.security.jwt.JwtAuthenticationManager;
 import com.example.reactiveproducer.security.jwt.JwtAuthenticationWebFilter;
-import com.example.reactiveproducer.security.jwt.AuthUtils;
 import com.example.reactiveproducer.security.jwt.SecurityContextRepository;
 import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +16,8 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.server.WebFilter;
 
 
@@ -27,11 +29,11 @@ import org.springframework.web.server.WebFilter;
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
 
-    public static final String JWT_AUTH_TOKEN = "jwt-auth-token";
+    public static final String JWT_AUTH_TOKEN = "jwtAuthToken";
 
     @Bean
     public DbUserDetailService userDetailService() {
-      return new DbUserDetailService();
+        return new DbUserDetailService();
     }
 
     @Bean
@@ -68,7 +70,20 @@ public class SecurityConfiguration {
     @Bean
     @Order(1)
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
-        return http.csrf().disable().cors().disable()
+
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addExposedHeader(JWT_AUTH_TOKEN);
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedMethod("*");
+
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+
+        return http.csrf().disable()
+            .cors().configurationSource(urlBasedCorsConfigurationSource)
+//            .cors().disable()
+    .and()
             .authorizeExchange()
             .and()
             .securityContextRepository(securityContextRepository())
