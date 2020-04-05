@@ -57,6 +57,6 @@ public class JwtAuthenticationWebFilter implements WebFilter {
     }
 
     private ServerWebExchangeMatcher getAuthMatcher() {
-        return ServerWebExchangeMatchers.matchers(new PathPatternParserServerWebExchangeMatcher("/auth", HttpMethod.GET));
+        return ServerWebExchangeMatchers.matchers(new PathPatternParserServerWebExchangeMatcher("/auth", HttpMethod.HEAD));
     }
 }

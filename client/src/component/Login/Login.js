@@ -2,7 +2,9 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
-import { height } from "@material-ui/system";
+import Button from "@material-ui/core/Button";
+
+import { restService } from "../../client/restClient.js";
 
 export const Login = (props) => {
 
@@ -13,7 +15,8 @@ export const Login = (props) => {
              style={{ width: "100%", height: "100%" }}>
 
             <Paper elevation={3}>
-                <Box display="flex" flexDirection="column" justifyContent="center" m={1} mt={0}style={{ height: "200px" }}>
+                <Box display="flex" flexDirection="column" justifyContent="center" m={1} mt={0}
+                     style={{ height: "200px" }}>
                     <Box p={2} pt={0}>
                         <TextField
                             id="standard-read-only-input"
@@ -31,6 +34,9 @@ export const Login = (props) => {
 
                         />
                     </Box>
+                    <Button variant="contained" color="primary" onClick={() => restService.authenticate({username: "test", password: "123"})}>
+                        Login
+                    </Button>
                 </Box>
             </Paper>
 

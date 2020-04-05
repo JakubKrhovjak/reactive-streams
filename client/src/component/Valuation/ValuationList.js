@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {fetchValuations} from "./duck/valuationAction";
 import {connect} from "react-redux";
 
