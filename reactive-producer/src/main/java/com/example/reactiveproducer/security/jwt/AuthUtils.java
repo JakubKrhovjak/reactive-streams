@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -35,8 +36,10 @@ import static com.example.reactiveproducer.security.jwt.AuthUtils.AuthCredential
 @Slf4j
 public class AuthUtils {
 
-    @Value("${jwt-secret-key}")
+    @Value("${jwt.secret-key}")
     private String jwtSecretKey;
+    @Value("${jwt.token-valididy}")
+    private long tokenValidity;
 
     enum AuthType {
         BASIC,
@@ -60,7 +63,7 @@ public class AuthUtils {
             .setIssuer(TOKEN_ISSUER)
             .setAudience(TOKEN_AUDIENCE)
             .setSubject(authentication.getName())
-            .setExpiration(new Date(System.currentTimeMillis() + 864000000))
+            .setExpiration(Date.from(Instant.now().plusMillis(tokenValidity)))
             .claim(ROLES, authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()))
