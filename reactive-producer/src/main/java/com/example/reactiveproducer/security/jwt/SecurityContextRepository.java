@@ -1,10 +1,8 @@
 package com.example.reactiveproducer.security.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
@@ -21,6 +19,9 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
 	@Autowired
 	private ReactiveAuthenticationManager jwtAuthenticationManager;
 
+	@Autowired
+	private AuthUtils authUtils;
+
 	@Override
 	public Mono<Void> save(ServerWebExchange swe, SecurityContext sc) {
 		throw new UnsupportedOperationException("Not supported yet.");
@@ -28,19 +29,15 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
 
 	@Override
 	public Mono<SecurityContext> load(ServerWebExchange exchange) {
-		String authHeader = exchange
-			.getRequest()
-			.getHeaders()
-			.getFirst(HttpHeaders.AUTHORIZATION);
+		return Mono.justOrEmpty(authUtils.getAuthPayload(exchange))
+			.map(auth -> authUtils.getToken(auth, AuthUtils.AuthType.BEARER))
+			.flatMap(this::getSecurityContext)
+			.switchIfEmpty(Mono.empty());
+	}
 
-		if (authHeader != null && authHeader.startsWith("Bearer ")) {
-			String authToken = authHeader.substring(7);
-			Authentication auth = new UsernamePasswordAuthenticationToken(authToken, authToken);
-			return this.jwtAuthenticationManager.authenticate(auth)
-				.map(SecurityContextImpl::new);
-		} else {
-			return Mono.empty();
-		}
+	private Mono<SecurityContext> getSecurityContext(String token) {
+		return jwtAuthenticationManager.authenticate(new UsernamePasswordAuthenticationToken(token, token))
+			.map(SecurityContextImpl::new);
 	}
 	
 }

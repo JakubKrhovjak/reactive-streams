@@ -92,7 +92,7 @@ public class AuthUtils {
         return Mono.just(new UsernamePasswordAuthenticationToken(username, null, getAuthorities(claims)));
     }
 
-    private String getAuthPayload(ServerWebExchange exchange) {
+    public String getAuthPayload(ServerWebExchange exchange) {
         String auth = exchange.getRequest()
             .getHeaders()
             .getFirst(HttpHeaders.AUTHORIZATION);
@@ -100,7 +100,7 @@ public class AuthUtils {
         return auth == null ? StringUtils.EMPTY : auth;
     }
 
-    private String getToken(String auth, AuthType type) {
+    public String getToken(String auth, AuthType type) {
         return auth.replace(type.value(), StringUtils.EMPTY).trim();
     }
 
