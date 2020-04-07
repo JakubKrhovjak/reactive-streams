@@ -8,16 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import reactor.core.publisher.Mono;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 
 
 /**
@@ -61,33 +58,12 @@ public class SecurityConfiguration {
     @Order(1)
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
 
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addExposedHeader(JWT_AUTH_TOKEN);
-        corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.addAllowedMethod("*");
-
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-
-        return http.csrf().disable()
-            .cors().configurationSource(urlBasedCorsConfigurationSource)
-//            .cors().disable()
-    .and()
-            .exceptionHandling()
-            .authenticationEntryPoint((swe, e) -> {
-                return Mono.fromRunnable(() -> {
-                    swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                });
-            }).accessDeniedHandler((swe, e) -> {
-                return Mono.fromRunnable(() -> {
-                    swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                });
-            })
-            .and()
-            .authorizeExchange()
+        return http.csrf()
+            .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
             .and()
             .securityContextRepository(securityContextRepository())
+            .authorizeExchange()
+            .and()
             .authorizeExchange()
             .pathMatchers("/auth").permitAll()
             .anyExchange().hasAuthority("USER")

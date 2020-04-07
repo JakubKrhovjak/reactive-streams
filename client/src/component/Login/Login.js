@@ -8,6 +8,13 @@ import { restService } from "../../client/restClient.js";
 
 export const Login = (props) => {
 
+    const authenticate = () =>  {
+        restService.authenticate( "test", "123")
+            .then(res => {
+                console.log(res);
+            })
+    }
+
     return (
 
 
@@ -34,7 +41,10 @@ export const Login = (props) => {
 
                         />
                     </Box>
-                    <Button variant="contained" color="primary" onClick={() => restService.authenticate({username: "test", password: "123"})}>
+                    <Button variant="contained"
+                            color="primary"
+                            onClick={() => authenticate()
+                    }>
                         Login
                     </Button>
                 </Box>

@@ -5,8 +5,10 @@ const rest = axios.create({
 });
 
 rest.interceptors.response.use((response, a, b) => {
-    // let headers = response.headers.jwtAuthToken;
-    return response => response;
+    if(response.data.jwtAuthToken) {
+        localStorage.setItem("jwtAuthToken", response.data.jwtAuthToken)
+    }
+    return response;
 }, (error) => {
     return Promise.reject(error);
 });
@@ -24,15 +26,10 @@ rest.interceptors.response.use((response, a, b) => {
 // };
 
 export const restService =  {
-    authenticate: (credential) => {
-        const credentialString  = `${credential.username}:${credential.password}`;
-        // return rest.head("/auth", {headers:{"Authorization": `Basic ${btoa(credentialString)}`}})
-
-        // return rest.head("/auth", {headers:{"Authorization": " Basic dGVzdDoxMjM=", "Access-Control-Allow-Origin": "*"}})
-
-        return rest.head("/auth", {   auth: {
-                username: 'test',
-                password: '123'
+    authenticate: (username, password) => {
+        return rest.get("/auth", {   auth: {
+                username,
+                password,
             },
         })
 
