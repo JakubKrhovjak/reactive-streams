@@ -15,6 +15,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.CsrfToken;
+import org.springframework.web.server.WebFilter;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -69,5 +72,13 @@ public class SecurityConfiguration {
             .anyExchange().hasAuthority("USER")
             .and()
             .build();
+    }
+
+    @Bean
+    WebFilter addCsrfToken() {
+        return (exchange, next) -> exchange
+            .<Mono<CsrfToken>>getAttribute(CsrfToken.class.getName())
+            .doOnSuccess(token -> {}) // do nothing, just subscribe :/
+            .then(next.filter(exchange));
     }
 }
