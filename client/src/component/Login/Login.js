@@ -5,13 +5,16 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 
 import { restService } from "../../client/restClient.js";
+import { useRouter } from "react-router5";
 
 export const Login = (props) => {
+   const router =  useRouter();
+
 
     const authenticate = () =>  {
         restService.authenticate( "test", "123")
             .then(res => {
-                console.log(res);
+                router.navigate("basic")
             })
     }
 
