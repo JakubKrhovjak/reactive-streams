@@ -7,7 +7,6 @@ import com.example.reactiveproducer.service.DbUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -58,7 +57,6 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(1)
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
 
         return http.csrf()
