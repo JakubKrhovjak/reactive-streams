@@ -1,16 +1,14 @@
 import React from "react";
-import ThemeProvider from "@material-ui/styles/ThemeProvider";
-import { theme } from "./theme/theme";
-import { Content } from "./component/Content/Content";
-import { RouterProvider,} from "react-router5";
+import { useActiveComponent } from "./hook/useActiveComponent";
+
 
 function App() {
 
-
+    const component = useActiveComponent();
     return (
-        <ThemeProvider theme={theme}>
-            <Content/>
-        </ThemeProvider>
+        <>
+            {component}
+        </>
     );
 }
 

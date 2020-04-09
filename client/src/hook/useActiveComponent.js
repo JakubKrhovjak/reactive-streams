@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useRouteNode, useRouter } from "react-router5";
+import { useEffect, useState } from "react";
+import { useRouteNode } from "react-router5";
 import { getLocationsMap } from "../router/locations";
 
 
