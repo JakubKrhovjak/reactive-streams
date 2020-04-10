@@ -10,7 +10,6 @@ import { useRouter } from "react-router5";
 export const Login = (props) => {
    const router =  useRouter();
 
-
     const authenticate = () =>  {
         restService.authenticate( "test", "123")
             .then(res => {
@@ -19,8 +18,6 @@ export const Login = (props) => {
     }
 
     return (
-
-
         <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center"
              style={{ width: "100%", height: "100%" }}>
 

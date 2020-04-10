@@ -27,7 +27,6 @@ import reactor.core.publisher.Mono;
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
 
-    public static final String JWT_AUTH_TOKEN = "jwtAuthToken";
 
     @Bean
     public DbUserDetailService userDetailService() {
