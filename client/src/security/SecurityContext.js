@@ -1,25 +1,21 @@
 import React, { createContext, useEffect, useState } from "react";
-import {emitter} from "../client/restClient.js"
 import  jwt  from "jsonwebtoken"
-import { INIT_SECURITY } from "../client/restClient";
 
 const SecurityContext = createContext();
 
-
 export const SecurityContextProvider = ({ children }) => {
 
-    const [securityContext,  setSecurityContext] =  useState({});
+    const [securityContext,  setSecurityContext] =  useState({roles: []});
 
     useEffect(() => {
-        emitter.on(INIT_SECURITY, jwtToken =>
-        {
+        let jwtToken = localStorage.getItem("jwtAuthToken");
+        if(jwtToken) {
             let token = jwt.decode(jwtToken);
-            setSecurityContext({username: token.sub, roles: token.roles});
-        });
-
+            setSecurityContext({ username: token.sub, roles: token.roles });
+        }
     }, []);
 
-    return (
+ ;   return (
         <SecurityContext.Provider
             value={securityContext}
         >
