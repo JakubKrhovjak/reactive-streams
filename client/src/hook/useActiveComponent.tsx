@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useRouteNode } from "react-router5";
 import { getLocationsMap } from "../router/locations";
 
-
-
 export const useActiveComponent = () => {
 
     const { route } = useRouteNode("");

@@ -9,11 +9,11 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import Typography from '@material-ui/core/Typography';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import clsx from 'clsx';
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import MailIcon from "@material-ui/icons/Mail";
+import Typography from "@material-ui/core/Typography";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import clsx from "clsx";
 
 import Sidebar from "../Sidebar/Sidebar";
 
@@ -21,66 +21,66 @@ const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
     root: {
-        display: 'flex',
+        display: "flex"
     },
     appBar: {
-        transition: theme.transitions.create(['margin', 'width'], {
+        transition: theme.transitions.create(["margin", "width"], {
             easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
+            duration: theme.transitions.duration.leavingScreen
+        })
     },
     appBarShift: {
         width: `calc(100% - ${drawerWidth}px)`,
         marginLeft: drawerWidth,
-        transition: theme.transitions.create(['margin', 'width'], {
+        transition: theme.transitions.create(["margin", "width"], {
             easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
+            duration: theme.transitions.duration.enteringScreen
+        })
     },
     menuButton: {
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(2)
     },
     hide: {
-        display: 'none',
+        display: "none"
     },
     drawer: {
         width: drawerWidth,
-        flexShrink: 0,
+        flexShrink: 0
     },
     drawerPaper: {
-        width: drawerWidth,
+        width: drawerWidth
     },
     drawerHeader: {
-        display: 'flex',
-        alignItems: 'center',
+        display: "flex",
+        alignItems: "center",
         padding: theme.spacing(0, 1),
         ...theme.mixins.toolbar,
-        justifyContent: 'flex-end',
+        justifyContent: "flex-end",
         background: theme.co
     },
     content: {
         flexGrow: 1,
         padding: theme.spacing(3),
-        transition: theme.transitions.create('margin', {
+        transition: theme.transitions.create("margin", {
             easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
+            duration: theme.transitions.duration.leavingScreen
         }),
-        marginLeft: -drawerWidth,
+        marginLeft: -drawerWidth
     },
     contentShift: {
-        transition: theme.transitions.create('margin', {
+        transition: theme.transitions.create("margin", {
             easing: theme.transitions.easing.easeOut,
-            duration: theme.transitions.duration.enteringScreen,
+            duration: theme.transitions.duration.enteringScreen
         }),
-        marginLeft: 0,
-    },
+        marginLeft: 0
+    }
 }));
 const Nav = props => {
     const classes = useStyles();
 
     const [navOpen, setNavOpen] = useState(false);
 
-    const handleNav = () => setNavOpen(!navOpen)
+    const handleNav = () => setNavOpen(!navOpen);
 
     const sideList = side => (
         <div
@@ -90,19 +90,19 @@ const Nav = props => {
             // onKeyDown={toggleDrawer(side, false)}
         >
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
                     <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
+                        <ListItemText primary={text}/>
                     </ListItem>
                 ))}
             </List>
-            <Divider />
+            <Divider/>
             <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                {["All mail", "Trash", "Spam"].map((text, index) => (
                     <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
+                        <ListItemText primary={text}/>
                     </ListItem>
                 ))}
             </List>
@@ -112,29 +112,29 @@ const Nav = props => {
 
     return (
         <Fragment>
-            <AppBar position="fixed"  className={clsx(classes.appBar, {
-                [classes.appBarShift]: navOpen,
+            <AppBar position="fixed" className={clsx(classes.appBar, {
+                [classes.appBarShift]: navOpen
             })}>
                 <Toolbar>
-                    {!navOpen &&  <IconButton
+                    {!navOpen && <IconButton
                         onClick={handleNav}
                         edge="start"
                         color="inherit"
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
 
                     </IconButton>}
                 </Toolbar>
             </AppBar>
             <Sidebar
-                 className={classes.drawer}
+                className={classes.drawer}
                 variant="persistent"
                 classes={{
-                paper: classes.drawerPaper,
-            }} open={navOpen}>
+                    paper: classes.drawerPaper
+                }} open={navOpen}>
                 <div className={classes.drawerHeader}>
                     <IconButton onClick={() => setNavOpen(false)}>
-                     <ChevronLeftIcon />
+                        <ChevronLeftIcon/>
                     </IconButton>
                 </div>
                 {sideList()}
@@ -142,22 +142,22 @@ const Nav = props => {
 
             <main
                 className={clsx(classes.content, {
-                    [classes.contentShift]: navOpen,
+                    [classes.contentShift]: navOpen
                 })}
             >
-                <div className={classes.drawerHeader} />
-            <Typography >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-                facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-                gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-                donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-                Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-                imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-                arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-                donec massa sapien faucibus et molestie ac.
-            </Typography>
+                <div className={classes.drawerHeader}/>
+                <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
+                    facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
+                    gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
+                    donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
+                    adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
+                    Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
+                    imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
+                    arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
+                    donec massa sapien faucibus et molestie ac.
+                </Typography>
             </main>
         </Fragment>
     );

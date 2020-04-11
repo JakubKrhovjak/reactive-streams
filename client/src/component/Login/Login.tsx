@@ -4,7 +4,7 @@ import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 
-import { restService } from "../../client/restClient.js";
+import { restService } from "../../client/restClient";
 import { useRouter } from "react-router5";
 
 export const Login = (props) => {
