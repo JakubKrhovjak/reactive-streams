@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.security.web.server.csrf.CsrfToken;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.server.WebFilter;
 import reactor.core.publisher.Mono;
 
@@ -29,7 +31,6 @@ import reactor.core.publisher.Mono;
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
-
     @Bean
     public DbUserDetailService userDetailService() {
         return new DbUserDetailService();
@@ -39,7 +40,6 @@ public class SecurityConfiguration {
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-
 
     @Bean
     @Primary
@@ -58,12 +58,28 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
+    UrlBasedCorsConfigurationSource corsConfig() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.addAllowedOrigin("http://localhost:3000");
+        corsConfig.setMaxAge(Long.valueOf("3600"));
+        corsConfig.addAllowedHeader("*");
+        corsConfig.addAllowedMethod("*");
 
+        UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+
+        return source;
+    }
+
+    @Bean
+    public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
         return http.csrf()
             .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
             .and()
-            .cors().disable()
+            .cors()
+            .configurationSource(corsConfig())
+            .and()
             .securityContextRepository(securityContextRepository())
             .authorizeExchange()
             .and()
