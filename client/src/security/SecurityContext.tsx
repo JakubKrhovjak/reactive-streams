@@ -6,14 +6,15 @@ export interface SecurityContext {
     roles: [];
 }
 
-const SecurityContext = createContext<SecurityContext>({username: undefined, roles: []});
+const INIT_CONTEXT : SecurityContext = {username: undefined, roles: []};
 
-export const AppContextProvider = SecurityContext.Provider;
-export const SecurityContextConsumer = SecurityContext.Consumer;
+const SecurityContext = createContext<SecurityContext>(INIT_CONTEXT);
+const AppContextProvider = SecurityContext.Provider;
+const SecurityContextConsumer = SecurityContext.Consumer;
 
 export const SecurityContextProvider = ({ children }) => {
 
-    const [securityContext,  setSecurityContext] =  useState<SecurityContext>({username: undefined, roles: []});
+    const [securityContext,  setSecurityContext] =  useState<SecurityContext>(INIT_CONTEXT);
 
     useEffect(() => {
         let jwtToken = localStorage.getItem("jwtAuthToken");
