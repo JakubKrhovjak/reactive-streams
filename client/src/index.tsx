@@ -7,6 +7,7 @@ import "./index.css";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import { theme } from "./theme/theme";
 import { SecurityContextProvider } from "./security/SecurityContext";
+import { ErrorHandler } from "./errorHandling/ErroHandel";
 
 const router = configureRouter();
 

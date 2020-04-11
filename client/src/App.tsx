@@ -1,5 +1,6 @@
 import React from "react";
 import { useActiveComponent } from "./hook/useActiveComponent";
+import { ErrorHandler } from "./errorHandling/ErroHandel";
 
 
 function App() {
@@ -7,7 +8,11 @@ function App() {
     const component = useActiveComponent();
     return (
         <>
-            {component}
+            {component ?
+            <ErrorHandler>
+                {component}
+            </ErrorHandler>
+            : <div></div>}
         </>
     );
 }

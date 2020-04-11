@@ -15,18 +15,22 @@ export const Login = (props) => {
         restService.authenticate(values.username, values.password)
             .then(res => {
                 router.navigate("basic");
+            })
+            .catch(e => {
+                throw new Error("eeeeee");
             });
     };
 
     return (
-        <Formik initialValues={{ username: "", password: "" }} onSubmit={(values, props) => {
-            authenticate(values);
-        }}>
-            {(props) => (
-                <Form>
-                    <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center"
-                         style={{ width: "100%", height: "100%" }}>
-                        <Paper elevation={3}>
+        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center"
+             style={{ width: "100%", height: "100%" }}>
+            <Paper elevation={3}>
+                <Formik initialValues={{ username: "", password: "" }} onSubmit={(values, props) => {
+                    props.setSubmitting(false);
+                    authenticate(values);
+                }}>
+                    {(props) => (
+                        <Form>
                             <Box display="flex" flexDirection="column" justifyContent="center" m={1} mt={0}
                                  style={{ height: "200px" }}>
                                 <Box p={2} pt={0}>
@@ -57,13 +61,12 @@ export const Login = (props) => {
                                     Login
                                 </Button>
                             </Box>
-                        </Paper>
 
-                    </Box>
-                </Form>)}
-        </Formik>
+                        </Form>)}
 
-
+                </Formik>
+            </Paper>
+        </Box>
     );
 
 };

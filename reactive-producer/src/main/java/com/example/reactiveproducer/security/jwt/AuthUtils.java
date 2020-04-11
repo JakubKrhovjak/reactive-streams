@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.vavr.control.Try;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
@@ -97,8 +98,10 @@ public class AuthUtils {
     }
 
     public AuthCredential getCredential(String token) {
-        String[] split = token.split(":");
-        return new AuthCredential(split[0], split[1]);
+        return Try.of(() -> {
+            String[] split = token.split(":");
+            return new AuthCredential(split[0], split[1]);
+        }).getOrElse(AuthCredential.UNAUTHORIZED);
     }
 
     private Mono<Jws<Claims>> parseJwtToken(String jwtToken) {
