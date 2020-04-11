@@ -35,7 +35,7 @@ public class AuthController {
 
     private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
-    @RequestMapping(value = "/auth", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public Mono<ResponseEntity<JwtTokenResponse>> generateToken(@RequestHeader("Authorization") Optional<String> authorization, ServerWebExchange exchange) {
         AuthUtils.AuthCredential credential = authorization
             .map(auth -> authUtils.getToken(auth, AuthUtils.AuthType.BASIC))

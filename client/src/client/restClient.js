@@ -6,10 +6,11 @@ const rest = axios.create({
 });
 
 export const INIT_SECURITY = "INIT_SECURITY";
+export const JWT_HEADER ="jwtAuthToken";
 
-rest.interceptors.response.use((response, a, b) => {
+rest.interceptors.response.use((response) => {
     if(response.data.jwtAuthToken) {
-        localStorage.setItem("jwtAuthToken", response.data.jwtAuthToken);
+        localStorage.setItem(JWT_HEADER, response.data.jwtAuthToken);
         emitter.emit(INIT_SECURITY, response.data.jwtAuthToken);
     }
     return response;
@@ -17,13 +18,27 @@ rest.interceptors.response.use((response, a, b) => {
     return Promise.reject(error);
 });
 
+
+rest.interceptors.request.use((request) => {
+    if(request.url !== "/login") {
+        request.headers.Authorization =`Bearer ${localStorage.getItem(JWT_HEADER)}`
+    }
+    return request
+}, (error) => {
+    return Promise.reject(error);
+});
+
 export const restService =  {
     authenticate: (username, password) => {
-        return rest.get("/auth", {   auth: {
+        return rest.get("/login", {   auth: {
                 username,
                 password,
             },
         })
 
-   }
+   },
+
+    get: (url) => {
+        return rest.get(url);
+    }
 };

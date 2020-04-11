@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -25,6 +26,7 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 @EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 public class SecurityConfiguration {
 
 
@@ -61,15 +63,17 @@ public class SecurityConfiguration {
         return http.csrf()
             .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
             .and()
+            .cors().disable()
             .securityContextRepository(securityContextRepository())
             .authorizeExchange()
             .and()
             .authorizeExchange()
-            .pathMatchers("/auth").permitAll()
+            .pathMatchers("/login").permitAll()
             .anyExchange().hasAuthority("USER")
             .and()
             .build();
     }
+
 
     @Bean
     WebFilter addCsrfToken() {

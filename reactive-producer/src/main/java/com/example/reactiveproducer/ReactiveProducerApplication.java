@@ -10,12 +10,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import reactor.core.publisher.Hooks;
 
 
 @SpringBootApplication
 public class ReactiveProducerApplication {
 
     public static void main(String[] args) {
+        Hooks.onOperatorDebug();
         new SpringApplicationBuilder(ReactiveProducerApplication.class)
             .web(WebApplicationType.REACTIVE)
             .run();

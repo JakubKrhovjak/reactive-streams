@@ -1,8 +1,9 @@
 package com.example.reactiveproducer.controller;
 
-import java.security.Principal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 
@@ -14,19 +15,9 @@ import reactor.core.publisher.Mono;
 public class SecController {
 
     @GetMapping("/basic")
-    public String basic(Mono<Principal> principal) {
-        return "ok";
-    }
-
-    @GetMapping("/free")
-    public String free() {
-        return "ok";
-    }
-
-
-    @GetMapping("login")
-    public String login() {
-        return "ok";
+    @PreAuthorize("hasAuthority('USER')")
+    public Mono<String> basic(ServerWebExchange ex) {
+        return Mono.just("ok");
     }
 
 }

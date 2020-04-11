@@ -1,3 +1,4 @@
+import React from "react";
 import { Basic } from "../component/Content/Basic";
 import { indexBy, prop } from "ramda";
 import { Login } from "../component/Login/Login";
@@ -11,8 +12,8 @@ const location = (name, path, config = {}) => {
 };
 
 export const locations = [
-    location("login", "/login", { component: Login }),
-    location("basic", "/basic", { component: Basic })
+    location("login", "/login", { component: <Login/> }),
+    location("basic", "/basic", { component: <Basic /> })
 ];
 
 
