@@ -2,18 +2,21 @@ package com.example.reactiveproducer.controller;
 
 import com.example.reactiveproducer.security.jwt.AuthUtils;
 import com.example.reactiveproducer.service.DbUserDetailService;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.ServerAuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -35,7 +38,16 @@ public class AuthController {
 
     private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+
+    @PostMapping(value = "/signIn")
+    public Mono<String> signIn(@RequestBody(required = false) String username) {
+        return userDetailsService.findByUsername(username)
+            .filter(Objects::isNull)
+            .map(UserDetails::getUsername);
+    }
+
+
+    @GetMapping(value = "/login")
     public Mono<ResponseEntity<JwtTokenResponse>> generateToken(@RequestHeader("Authorization") Optional<String> authorization, ServerWebExchange exchange) {
         AuthUtils.AuthCredential credential = authorization
             .map(auth -> authUtils.getToken(auth, AuthUtils.AuthType.BASIC))

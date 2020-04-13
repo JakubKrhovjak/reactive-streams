@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -6,36 +6,12 @@ import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import * as Yup from "yup";
 
-import { restService } from "../../client/restClient";
-import { useRouter } from "react-router5";
-
 const loginSchema = Yup.object().shape({
     username: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().required("password", "Required"),
 });
 
-export const Login = (props) => {
-    const router = useRouter();
-
-    const add = (a, b) => {
-        return a + b;
-    };
-
-    useEffect(() => {
-        console.log(add(2, 3));
-    }, []);
-
-    const authenticate = (values) => {
-        restService
-            .authenticate(values.username, values.password)
-            .then((res) => {
-                router.navigate("basic");
-            })
-            .catch((e) => {
-                throw new Error("eeeeee");
-            });
-    };
-
+export const Login = ({ authenticate }) => {
     return (
         <Box
             display="flex"
@@ -50,7 +26,7 @@ export const Login = (props) => {
                     initialValues={{ username: "", password: "" }}
                     onSubmit={(values, props) => {
                         props.setSubmitting(false);
-                        authenticate(values);
+                        authenticate(values, props.setFieldError);
                     }}
                 >
                     {(props) => (

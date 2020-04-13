@@ -8,11 +8,7 @@ function App() {
     const component = useActiveComponent();
     return (
         <>
-            {component ?
-            <ErrorHandler>
-                {component}
-            </ErrorHandler>
-            : <div></div>}
+            {component}
         </>
     );
 }

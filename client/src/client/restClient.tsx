@@ -1,6 +1,9 @@
 import axios from 'axios';
 const rest = axios.create({
-    baseURL: 'http://localhost:8082'
+    baseURL: 'http://localhost:8082',
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
 export const INIT_SECURITY = "INIT_SECURITY";
@@ -37,5 +40,9 @@ export const restService =  {
 
     get: (url) => {
         return rest.get(url);
+    },
+
+    post: (url, data) => {
+        return rest.post(url, data);
     }
 };

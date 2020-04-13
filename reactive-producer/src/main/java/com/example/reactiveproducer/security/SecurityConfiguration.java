@@ -81,10 +81,12 @@ public class SecurityConfiguration {
             .configurationSource(corsConfig())
             .and()
             .securityContextRepository(securityContextRepository())
+
             .authorizeExchange()
             .and()
             .authorizeExchange()
-            .pathMatchers("/login").permitAll()
+            .pathMatchers( "/login").permitAll()
+            .pathMatchers("/signIn").permitAll()
             .anyExchange().hasAuthority("USER")
             .and()
             .build();
