@@ -4,6 +4,7 @@ import com.example.reactiveproducer.security.jwt.AuthUtils;
 import com.example.reactiveproducer.security.jwt.JwtAuthenticationManager;
 import com.example.reactiveproducer.security.jwt.SecurityContextRepository;
 import com.example.reactiveproducer.service.DbUserDetailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -26,6 +27,7 @@ import reactor.core.publisher.Mono;
  * @author Jakub Krhovjak
  */
 
+@Slf4j
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
@@ -60,7 +62,7 @@ public class SecurityConfiguration {
     @Bean
     UrlBasedCorsConfigurationSource corsConfig() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("http://localhost:3000");
+        corsConfig.addAllowedOrigin("*");
         corsConfig.setMaxAge(Long.valueOf("3600"));
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedMethod("*");
@@ -85,8 +87,7 @@ public class SecurityConfiguration {
             .authorizeExchange()
             .and()
             .authorizeExchange()
-            .pathMatchers( "/login").permitAll()
-            .pathMatchers("/signIn").permitAll()
+            .pathMatchers( "/sign-in", "/login").permitAll()
             .anyExchange().hasAuthority("USER")
             .and()
             .build();

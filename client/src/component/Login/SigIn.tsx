@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import * as Yup from "yup";
-import { Grid } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 
 const signInSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
@@ -25,12 +25,19 @@ export const SignIn = ({ signIn }) => {
                 >
                     {(props) => (
                         <Form>
-                            <Box p={4}
+
+                            <Box p={3} pt={2}
                                  display="flex"
                                  flexDirection="column"
                                  alignItems="flex-end"
-                                 width={300}
+                                 width={350}
                            >
+
+                                <Box alignSelf="start">
+                                    <Typography variant="h5" gutterBottom>
+                                        Sign in
+                                    </Typography>
+                                </Box>
                                 <Box mb={4} width="100%" >
                                     <Field
                                         fullWidth

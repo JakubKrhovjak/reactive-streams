@@ -14,9 +14,8 @@ import org.springframework.security.web.server.authentication.HttpBasicServerAut
 import org.springframework.security.web.server.authentication.ServerAuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -39,12 +38,13 @@ public class AuthController {
     private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
 
-    @PostMapping(value = "/signIn")
-    public Mono<String> signIn(@RequestBody(required = false) String username) {
+    @GetMapping(value = "/sign-in")
+    public Mono<String> test(@RequestParam("username") String username) {
         return userDetailsService.findByUsername(username)
-            .filter(Objects::isNull)
+            .filter(Objects::nonNull)
             .map(UserDetails::getUsername);
     }
+
 
 
     @GetMapping(value = "/login")

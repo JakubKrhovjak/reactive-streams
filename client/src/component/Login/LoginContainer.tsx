@@ -1,36 +1,47 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import { restService } from "../../client/restClient";
 import { useRouter } from "react-router5";
 import { SignIn } from "./SigIn";
 import { Login } from "./Login";
 import { Grid } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-
-const SIGN_IN = "SIGN_IN";
+enum Auth {
+    SIGN_IN,
+    LOG_IN,
+    NEW_ACCOUNT,
+}
 
 interface Credential {
     username: string;
     password: string;
 }
 
+const INIT_STATE = {
+    loginState: Auth.SIGN_IN,
+    header: "log in",
+};
 
-
+const reducer = (state, action) => {
+    return {
+        ...state,
+        ...action.data,
+    };
+};
 
 export const LoginContainer = (props) => {
     const router = useRouter();
 
-    const [type, setType] = useState<string>(SIGN_IN);
+    const [state, dispatch] = useReducer(reducer, INIT_STATE);
 
     const signIn = (username: string) => {
         restService
-            .post("/signIn", username)
+            .get(`/sign-in?username=${username}`)
             .then((res) => {
-                if (res.data) {
-                    setType(SIGN_IN)
-                }
+                res.data
+                    ? dispatch({ loginState: Auth.LOG_IN })
+                    : dispatch({ header: "New account" });
             })
             .catch((e) => {
-                console.info(e)
+                console.info(e);
                 // setFieldError("password", "Invalid password!")
             });
     };
@@ -50,23 +61,22 @@ export const LoginContainer = (props) => {
     };
 
     const resolveComponent = () => {
-        return type === SIGN_IN ? (
+        return state.loginType === Auth.SIGN_IN ? (
             <SignIn signIn={signIn} />
         ) : (
-            <Login authenticate={authenticate}/>
+            <Login authenticate={authenticate} header={state.header} />
         );
-    }
+    };
 
     return (
-        <Grid  container
-               direction="row"
-               justify="center"
-               alignItems="center"
-               style={{height: "100%"}}
+        <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+            style={{ height: "100%" }}
         >
             {resolveComponent()}
         </Grid>
-    )
-
-
+    );
 };

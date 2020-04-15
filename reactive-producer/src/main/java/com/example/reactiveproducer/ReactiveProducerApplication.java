@@ -2,7 +2,6 @@ package com.example.reactiveproducer;
 
 import com.example.reactiveproducer.entity.User;
 import com.example.reactiveproducer.repository.UserRepository;
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,10 +28,10 @@ public class ReactiveProducerApplication {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
         userRepository.deleteAll().subscribe();
-        User user = new User().setUsername("test").setPassword(passwordEncoder.encode("123"));
+        User user = new User().setUsername("test@email.cz").setPassword(passwordEncoder.encode("123"));
         userRepository.save(user).subscribe();
     }
 

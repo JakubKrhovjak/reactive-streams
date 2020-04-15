@@ -5,13 +5,14 @@ import Button from "@material-ui/core/Button";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import * as Yup from "yup";
+import { Typography } from "@material-ui/core";
 
 const loginSchema = Yup.object().shape({
     username: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().required("password", "Required"),
 });
 
-export const Login = ({ authenticate }) => {
+export const Login = ({ authenticate, header }) => {
     return (
         <Box
             display="flex"
@@ -35,10 +36,17 @@ export const Login = ({ authenticate }) => {
                                 display="flex"
                                 flexDirection="column"
                                 justifyContent="center"
-                                m={1}
-                                mt={0}
+                                p={3} pt={2}
                                 style={{ height: "200px" }}
                             >
+
+
+                                <Box alignSelf="start">
+                                    <Typography variant="h5" gutterBottom>
+                                        {header}
+                                    </Typography>
+                                </Box>
+
                                 <Box p={2} pt={0}>
                                     <Field
                                         component={TextField}

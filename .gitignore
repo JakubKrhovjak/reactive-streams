@@ -14,6 +14,7 @@ HELP.md
 
 client/yarn.lock
 /.idea/
+/.idea/libraries
 reactive-streams.iml
 /mongo-data/mongodb/data/db/_mdb_catalog.wt
 /mongo-data/mongodb/data/db/collection-0--4301222647026993130.wt
