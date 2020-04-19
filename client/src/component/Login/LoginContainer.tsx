@@ -4,7 +4,8 @@ import { useRouter } from "react-router5";
 import { SignIn } from "./SigIn";
 import { Login } from "./Login";
 import { Grid } from "@material-ui/core";
-enum Auth {
+
+export enum Auth {
     SIGN_IN,
     LOG_IN,
     NEW_ACCOUNT,
@@ -16,15 +17,16 @@ interface Credential {
 }
 
 const INIT_STATE = {
-    loginState: Auth.SIGN_IN,
+    loginType: Auth.SIGN_IN,
     header: "log in",
 };
 
 const reducer = (state, action) => {
-    return {
+    const a = {
         ...state,
-        ...action.data,
+        ...action,
     };
+    return a;
 };
 
 export const LoginContainer = (props) => {
@@ -34,11 +36,19 @@ export const LoginContainer = (props) => {
 
     const signIn = (username: string) => {
         restService
-            .get(`/sign-in?username=${username}`)
+            .post("/sign-in", username)
             .then((res) => {
-                res.data
-                    ? dispatch({ loginState: Auth.LOG_IN })
-                    : dispatch({ header: "New account" });
+                if (res.data) {
+                    dispatch({ loginType: Auth.LOG_IN });
+                } else {
+                    dispatch({
+                        header: "New account",
+                        loginType: Auth.NEW_ACCOUNT,
+                    });
+                }
+                // res.data
+                //     ? dispatch({ loginType: Auth.LOG_IN })
+                //     : dispatch({ header: "New account" });
             })
             .catch((e) => {
                 console.info(e);
@@ -60,11 +70,28 @@ export const LoginContainer = (props) => {
             });
     };
 
+    const createAccount = (
+        values: Credential,
+        setFieldError: (a: string, b: string) => void
+    ) => {
+        restService
+            .authenticate(values.username, values.password)
+            .then((res) => {
+                router.navigate("basic");
+            })
+            .catch((e) => {
+                setFieldError("password", "Invalid password!");
+            });
+    };
+
     const resolveComponent = () => {
         return state.loginType === Auth.SIGN_IN ? (
             <SignIn signIn={signIn} />
         ) : (
-            <Login authenticate={authenticate} header={state.header} />
+            <Login
+                accountAction={Auth.NEW_ACCOUNT ? createAccount : authenticate}
+                header={state.header}
+            />
         );
     };
 

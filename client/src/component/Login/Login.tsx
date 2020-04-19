@@ -6,20 +6,20 @@ import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import * as Yup from "yup";
 import { Typography } from "@material-ui/core";
+import { Auth } from "./LoginContainer";
 
 const loginSchema = Yup.object().shape({
     username: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().required("password", "Required"),
 });
 
-export const Login = ({ authenticate, header }) => {
+export const Login = ({ accountAction, header }) => {
     return (
         <Box
             display="flex"
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            style={{ width: "100%", height: "100%" }}
         >
             <Paper elevation={3}>
                 <Formik
@@ -27,28 +27,28 @@ export const Login = ({ authenticate, header }) => {
                     initialValues={{ username: "", password: "" }}
                     onSubmit={(values, props) => {
                         props.setSubmitting(false);
-                        authenticate(values, props.setFieldError);
+                        accountAction(values, props.setFieldError);
                     }}
                 >
                     {(props) => (
                         <Form>
                             <Box
+                                p={3}
+                                pt={2}
                                 display="flex"
                                 flexDirection="column"
-                                justifyContent="center"
-                                p={3} pt={2}
-                                style={{ height: "200px" }}
+                                alignItems="flex-end"
+                                width={350}
                             >
-
-
                                 <Box alignSelf="start">
                                     <Typography variant="h5" gutterBottom>
                                         {header}
                                     </Typography>
                                 </Box>
 
-                                <Box p={2} pt={0}>
+                                <Box mb={3} width="100%">
                                     <Field
+                                        fullWidth
                                         component={TextField}
                                         name="username"
                                         type="email"
@@ -56,8 +56,9 @@ export const Login = ({ authenticate, header }) => {
                                     ></Field>
                                 </Box>
 
-                                <Box p={2}>
+                                <Box mb={4} width="100%">
                                     <Field
+                                        fullWidth
                                         component={TextField}
                                         name="password"
                                         type="password"

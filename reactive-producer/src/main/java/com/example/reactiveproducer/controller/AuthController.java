@@ -13,11 +13,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.ServerAuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -25,6 +26,8 @@ import reactor.core.scheduler.Schedulers;
 /**
  * Created by Jakub krhovják on 4/5/20.
  */
+
+@CrossOrigin(value = "*", allowedHeaders = "*")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -37,18 +40,22 @@ public class AuthController {
 
     private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
-
-    @GetMapping(value = "/sign-in")
-    public Mono<String> test(@RequestParam("username") String username) {
+    @PostMapping(value = "/sign-in")
+    public Mono<String> signIn(@RequestBody String username) {
         return userDetailsService.findByUsername(username)
             .filter(Objects::nonNull)
             .map(UserDetails::getUsername);
     }
 
+    @PostMapping(value = "/new-account")
+    public Mono<Void> newAccount(@RequestBody AuthUtils.AuthCredential newCredential) {
+        userDetailsService.newAccount(newCredential);
+        return Mono.empty();
+    }
 
 
     @GetMapping(value = "/login")
-    public Mono<ResponseEntity<JwtTokenResponse>> generateToken(@RequestHeader("Authorization") Optional<String> authorization, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<JwtTokenResponse>> generateToken(@RequestHeader("Authorization") Optional<String> authorization) {
         AuthUtils.AuthCredential credential = authorization
             .map(auth -> authUtils.getToken(auth, AuthUtils.AuthType.BASIC))
             .map(authUtils::decode)
