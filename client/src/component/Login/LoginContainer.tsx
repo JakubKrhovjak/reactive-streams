@@ -19,7 +19,7 @@ interface Credential {
 const INIT_STATE = {
     loginType: Auth.SIGN_IN,
     header: "log in",
-    username: ""
+    username: "",
 };
 
 const reducer = (state, action) => {
@@ -77,7 +77,10 @@ export const LoginContainer = (props) => {
         setFieldError: (a: string, b: string) => void
     ) => {
         restService
-            .authenticate(values.username, values.password)
+            .post("/new-account", {
+                username: values.username,
+                password: values.password,
+            })
             .then((res) => {
                 router.navigate("basic");
             })

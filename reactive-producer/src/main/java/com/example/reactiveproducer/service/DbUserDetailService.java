@@ -28,7 +28,7 @@ public class DbUserDetailService {
 
     public void newAccount(AuthUtils.AuthCredential newCredential) {
         User user = new User().setUsername(newCredential.getUsername()).setPassword(newCredential.getPassword());
-        userRepository.save(user);
+        userRepository.save(user).subscribe();
     }
 
 }
