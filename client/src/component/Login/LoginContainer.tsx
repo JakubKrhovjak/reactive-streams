@@ -19,6 +19,7 @@ interface Credential {
 const INIT_STATE = {
     loginType: Auth.SIGN_IN,
     header: "log in",
+    username: ""
 };
 
 const reducer = (state, action) => {
@@ -44,6 +45,7 @@ export const LoginContainer = (props) => {
                     dispatch({
                         header: "New account",
                         loginType: Auth.NEW_ACCOUNT,
+                        username,
                     });
                 }
                 // res.data
@@ -91,6 +93,7 @@ export const LoginContainer = (props) => {
             <Login
                 accountAction={Auth.NEW_ACCOUNT ? createAccount : authenticate}
                 header={state.header}
+                username={state.username}
             />
         );
     };

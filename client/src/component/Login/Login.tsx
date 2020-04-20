@@ -13,7 +13,7 @@ const loginSchema = Yup.object().shape({
     password: Yup.string().required("password", "Required"),
 });
 
-export const Login = ({ accountAction, header }) => {
+export const Login = ({ accountAction, header, username }) => {
     return (
         <Box
             display="flex"
@@ -24,7 +24,7 @@ export const Login = ({ accountAction, header }) => {
             <Paper elevation={3}>
                 <Formik
                     validationSchema={loginSchema}
-                    initialValues={{ username: "", password: "" }}
+                    initialValues={{ username, password: "" }}
                     onSubmit={(values, props) => {
                         props.setSubmitting(false);
                         accountAction(values, props.setFieldError);

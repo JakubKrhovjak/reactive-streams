@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.ServerAuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +26,6 @@ import reactor.core.scheduler.Schedulers;
  * Created by Jakub krhovják on 4/5/20.
  */
 
-@CrossOrigin(value = "*", allowedHeaders = "*")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -41,7 +39,7 @@ public class AuthController {
     private ServerAuthenticationFailureHandler authenticationFailureHandler = new ServerAuthenticationEntryPointFailureHandler(new HttpBasicServerAuthenticationEntryPoint());
 
     @PostMapping(value = "/sign-in")
-    public Mono<String> signIn(@RequestBody String username) {
+    public Mono<String> signIn(@RequestBody(required = false) String username) {
         return userDetailsService.findByUsername(username)
             .filter(Objects::nonNull)
             .map(UserDetails::getUsername);
