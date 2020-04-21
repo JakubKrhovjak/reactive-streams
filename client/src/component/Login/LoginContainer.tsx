@@ -40,7 +40,7 @@ export const LoginContainer = (props) => {
             .post("/sign-in", username)
             .then((res) => {
                 if (res.data) {
-                    dispatch({ loginType: Auth.LOG_IN });
+                    dispatch({ loginType: Auth.LOG_IN, username });
                 } else {
                     dispatch({
                         header: "New account",
@@ -48,13 +48,9 @@ export const LoginContainer = (props) => {
                         username,
                     });
                 }
-                // res.data
-                //     ? dispatch({ loginType: Auth.LOG_IN })
-                //     : dispatch({ header: "New account" });
             })
             .catch((e) => {
                 console.info(e);
-                // setFieldError("password", "Invalid password!")
             });
     };
 
@@ -72,29 +68,29 @@ export const LoginContainer = (props) => {
             });
     };
 
-    const createAccount = (
+     const  createAccount = async (
         values: Credential,
         setFieldError: (a: string, b: string) => void
     ) => {
-        restService
+       restService
             .post("/new-account", {
                 username: values.username,
                 password: values.password,
             })
-            .then((res) => {
-                router.navigate("basic");
-            })
-            .catch((e) => {
-                setFieldError("password", "Invalid password!");
-            });
-    };
+           .then(() => restService.authenticate(values.username, values.password)
+               .then(() => {
+                   router.navigate("basic")
+               }))
+
+           .catch(e => setFieldError("password", "Invalid password!"))
+     };
 
     const resolveComponent = () => {
         return state.loginType === Auth.SIGN_IN ? (
             <SignIn signIn={signIn} />
         ) : (
             <Login
-                accountAction={Auth.NEW_ACCOUNT ? createAccount : authenticate}
+                accountAction={Auth.NEW_ACCOUNT === state.loginType ? createAccount : authenticate}
                 header={state.header}
                 username={state.username}
             />

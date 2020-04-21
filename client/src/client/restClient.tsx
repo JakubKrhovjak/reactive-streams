@@ -51,6 +51,6 @@ export const restService = {
     },
 
     post: (url, data) => {
-        return rest.post(url, JSON.stringify(data));
+        return rest.post(url, data);
     }
 };

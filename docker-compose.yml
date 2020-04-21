@@ -41,7 +41,7 @@ services:
     image: bitnami/mongodb:latest
     container_name: mongodb
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ./mongo-data:/bitnami
     restart: always

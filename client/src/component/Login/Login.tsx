@@ -6,7 +6,6 @@ import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-material-ui";
 import * as Yup from "yup";
 import { Typography } from "@material-ui/core";
-import { Auth } from "./LoginContainer";
 
 const loginSchema = Yup.object().shape({
     username: Yup.string().email("Invalid email").required("Required"),
