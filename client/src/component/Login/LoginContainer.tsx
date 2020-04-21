@@ -54,10 +54,11 @@ export const LoginContainer = (props) => {
             });
     };
 
-    const authenticate = (
+    const authenticate = async (
         values: Credential,
         setFieldError: (a: string, b: string) => void
     ) => {
+
         restService
             .authenticate(values.username, values.password)
             .then((res) => {
@@ -72,17 +73,17 @@ export const LoginContainer = (props) => {
         values: Credential,
         setFieldError: (a: string, b: string) => void
     ) => {
-       restService
+       const result  = await restService
             .post("/new-account", {
                 username: values.username,
                 password: values.password,
-            })
-           .then(() => restService.authenticate(values.username, values.password)
-               .then(() => {
-                   router.navigate("basic")
-               }))
+            });
 
-           .catch(e => setFieldError("password", "Invalid password!"))
+       if(result.status === 200) {
+           restService.authenticate(values.username, values.password)
+               .then(res => router.navigate("basic"))
+       }
+
      };
 
     const resolveComponent = () => {

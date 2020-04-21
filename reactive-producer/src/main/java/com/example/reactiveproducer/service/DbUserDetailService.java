@@ -5,6 +5,7 @@ import com.example.reactiveproducer.repository.UserRepository;
 import com.example.reactiveproducer.security.jwt.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 public class DbUserDetailService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Mono<UserDetails> findByUsername(String username) {
         return userRepository.findByUsername(username)
@@ -27,7 +29,9 @@ public class DbUserDetailService {
     }
 
     public void newAccount(AuthUtils.AuthCredential newCredential) {
-        User user = new User().setUsername(newCredential.getUsername()).setPassword(newCredential.getPassword());
+        User user = new User()
+            .setUsername(newCredential.getUsername())
+            .setPassword(passwordEncoder.encode(newCredential.getPassword()));
         userRepository.save(user).subscribe();
     }
 
