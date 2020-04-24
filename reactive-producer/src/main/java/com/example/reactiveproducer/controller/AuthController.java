@@ -67,6 +67,14 @@ public class AuthController {
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
+    @GetMapping(value = "/")
+    public Mono<String> signIan(@RequestBody(required = false) String username) {
+        return userDetailsService.findByUsername(username)
+            .filter(Objects::nonNull)
+            .map(UserDetails::getUsername);
+    }
+
+
     @Data
     public class JwtTokenResponse {
 

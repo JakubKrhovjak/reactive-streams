@@ -35,6 +35,8 @@ public class ReactiveProducerApplication {
         userRepository.save(user).subscribe();
     }
 
+
+
     @Bean
     public LoggingEventListener mongoEventListener() {
         return new LoggingEventListener();

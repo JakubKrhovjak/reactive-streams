@@ -77,9 +77,13 @@ public class SecurityConfiguration {
             .authorizeExchange()
             .and()
             .authorizeExchange()
-            .pathMatchers(  "/sign-in", "/new-account", "/login").permitAll()
+            .pathMatchers(  "/", "/sign-in", "/new-account", "/login").permitAll()
             .anyExchange().hasAuthority("USER")
             .and()
+            .httpBasic()
+            .disable()
+            .formLogin()
+            .disable()
             .build();
     }
 
