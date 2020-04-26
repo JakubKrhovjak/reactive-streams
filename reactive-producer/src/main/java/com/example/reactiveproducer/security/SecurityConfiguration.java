@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -57,13 +59,13 @@ public class SecurityConfiguration {
         corsConfig.addAllowedMethod("*");
         corsConfig.addAllowedHeader("*");
 
-
         UrlBasedCorsConfigurationSource source =
             new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
 
         return source;
     }
+
 
     @Bean
     public SecurityWebFilterChain userSecurityWebFilterChain(ServerHttpSecurity http) {
@@ -74,18 +76,26 @@ public class SecurityConfiguration {
             .configurationSource(corsConfig())
             .and()
             .securityContextRepository(securityContextRepository())
-            .authorizeExchange()
+            .exceptionHandling()
+            .authenticationEntryPoint((exchange, e) -> {
+                return Mono.fromRunnable(() -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+
+                });
+            }).accessDeniedHandler((exchange, e) -> {
+                return Mono.fromRunnable(() -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                });
+            })
             .and()
             .authorizeExchange()
-            .pathMatchers(  "/", "/sign-in", "/new-account", "/login").permitAll()
+            .pathMatchers(    "/", "/static/**", "/sign-in", "/new-account", "/login").permitAll()
             .anyExchange().hasAuthority("USER")
             .and()
-            .httpBasic()
-            .disable()
-            .formLogin()
-            .disable()
             .build();
     }
+
+
 
 
 //    @Bean

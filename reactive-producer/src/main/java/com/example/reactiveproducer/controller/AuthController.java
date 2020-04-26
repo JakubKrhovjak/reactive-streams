@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.authentication.HttpBasicServerAuthenticationEntryPoint;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -51,29 +53,20 @@ public class AuthController {
         return Mono.empty();
     }
 
-
     @GetMapping(value = "/login")
-    public Mono<ResponseEntity<JwtTokenResponse>> generateToken(@RequestHeader("Authorization") Optional<String> authorization) {
+    public Mono<ResponseEntity<JwtTokenResponse>> generateToken(@RequestHeader("Authorization") Optional<String> authorization, ServerWebExchange excahnge) {
         AuthUtils.AuthCredential credential = authorization
             .map(auth -> authUtils.getToken(auth, AuthUtils.AuthType.BASIC))
             .map(authUtils::decode)
             .map(authUtils::getCredential)
-            .orElse(AuthUtils.AuthCredential.UNAUTHORIZED);
-
+             .orElseThrow(() -> new AccessDeniedException("Invalid credential!"));
         return userDetailsService.findByUsername(credential.getUsername())
             .publishOn(Schedulers.parallel())
             .filter(details -> passwordEncoder.matches(credential.getPassword(), details.getPassword()))
             .map(details -> ResponseEntity.ok(new JwtTokenResponse(authUtils.generateToken(details))))
             .defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
-    }
 
-    @GetMapping(value = "/")
-    public Mono<String> signIan(@RequestBody(required = false) String username) {
-        return userDetailsService.findByUsername(username)
-            .filter(Objects::nonNull)
-            .map(UserDetails::getUsername);
     }
-
 
     @Data
     public class JwtTokenResponse {

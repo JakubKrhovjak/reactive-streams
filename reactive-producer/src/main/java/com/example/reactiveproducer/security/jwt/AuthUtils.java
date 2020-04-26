@@ -81,11 +81,9 @@ public class AuthUtils {
     }
 
     public String getAuthPayload(ServerWebExchange exchange) {
-        String auth = exchange.getRequest()
+        return exchange.getRequest()
             .getHeaders()
             .getFirst(HttpHeaders.AUTHORIZATION);
-
-        return auth == null ? StringUtils.EMPTY : auth;
     }
 
     public String getToken(String auth, AuthType type) {
