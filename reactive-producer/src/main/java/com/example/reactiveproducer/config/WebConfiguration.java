@@ -25,19 +25,15 @@ public class WebConfiguration implements WebFluxConfigurer {
 
 
     @Bean
-    public RouterFunction<ServerResponse> indexRouter(@Value("classpath:/index.html") final Resource indexHtml) {
-        return route(GET("/"), request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(indexHtml));
-    }
-
-    @Bean
     public RouterFunction<ServerResponse> indexRouter2(@Value("classpath:/index.html") final Resource indexHtml) {
-        return route(GET("/login"), request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(indexHtml));
+        return route(GET("/*"), request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(indexHtml));
     }
 
 
     @Bean
-    public RouterFunction<ServerResponse> imgRouter() {
+    public RouterFunction<ServerResponse> staticResourcesRouter() {
         return RouterFunctions
             .resources("/static/**", new ClassPathResource("static/"));
     }
+
 }
