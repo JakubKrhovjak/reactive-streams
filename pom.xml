@@ -7,7 +7,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.5.RELEASE</version>
 
-<!--        <relativePath/>-->
+        <relativePath/>
     </parent>
 
     <groupId>net.japca</groupId>
@@ -16,13 +16,14 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>client</module>
         <module>reactive-producer</module>
     </modules>
 
     <properties>
         <java.version>11</java.version>
         <npm-builder.version>1.9.1</npm-builder.version>
-        <working-directory>client</working-directory>
+<!--        <working-directory>${basedir}/client</working-directory>-->
         <NODE_ENV>production</NODE_ENV>
     </properties>
 
@@ -44,61 +45,5 @@
         </dependency>
 
     </dependencies>
-
-
-    <build>
-        <plugins>
-              <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>${npm-builder.version}</version>
-                <configuration>
-                    <environmentVariables>
-                        <workingDirectory>${working-directory}</workingDirectory>
-                        <NODE_ENV>${NODE_ENV}</NODE_ENV>
-                    </environmentVariables>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>${working-directory}</workingDirectory>
-<!--                            <skip>true</skip>-->
-                            <nodeVersion>v10.20.1</nodeVersion>
-<!--                            <npmVersion>6.9.1</npmVersion>-->
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>${working-directory}</workingDirectory>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm build</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>${working-directory}</workingDirectory>
-<!--                            <installDirectory>client</installDirectory>-->
-                            <arguments>run build</arguments>
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
