@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv build/static ../reactive-producer/src/main/resources/static && mv build/* ../reactive-producer/src/main/resources/",
+    "build": "react-scripts build && ./build.sh",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/client/client.iml" filepath="$PROJECT_DIR$/client/client.iml" />
       <module fileurl="file://$PROJECT_DIR$/reactive-producer/reactive-producer.iml" filepath="$PROJECT_DIR$/reactive-producer/reactive-producer.iml" />
       <module fileurl="file://$PROJECT_DIR$/reactive-streams.iml" filepath="$PROJECT_DIR$/reactive-streams.iml" />
     </modules>
