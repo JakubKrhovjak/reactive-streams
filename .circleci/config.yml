@@ -30,6 +30,5 @@ jobs: # a collection of steps
       - run:
           name: "Deploy to Server"
           command: |
-            echo $digitpass
-#            sshpass -p $digitpass scp /home/circleci/circle-build/target/coins-tracker.jar root@134.209.229.109/root
+            scp /home/circleci/circle-build/target/coins-tracker.jar root@134.209.229.109/root
 
