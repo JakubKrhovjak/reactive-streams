@@ -27,7 +27,10 @@ jobs: # a collection of steps
       
       - run: mvn package # run the actual tests
 
-      - run: echo pwd
-      - run: echo $digitpass
-      - run:  sshpass -p $digitpass scp /home/circleci/circle-build/target/coins-tracker.jar root@134.209.229.109/root
+      - run:
+          name: "Deploy to Server"
+          command: |
+            echo pwd
+            echo $digitpass
+            sshpass -p $digitpass scp /home/circleci/circle-build/target/coins-tracker.jar root@134.209.229.109/root
 
